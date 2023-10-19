@@ -23,7 +23,7 @@ function calculatePercentage(res) {
   return res.records;
 }
 
-async function getFeeAndUserDataQuaterly() {
+async function getArbFeeAndUserDataQuaterly() {
   const sql = `
     SELECT
     DATE_TRUNC('quarter', BLOCK_TIMESTAMP) AS quarter,
@@ -46,7 +46,7 @@ async function getFeeAndUserDataQuaterly() {
   }
 }
 
-async function getFeeAndUserDataMonthly() {
+async function getArbFeeAndUserDataQuaterly() {
   const sql = `
     SELECT
     DATE_TRUNC('month', BLOCK_TIMESTAMP) AS month,
@@ -69,7 +69,7 @@ async function getFeeAndUserDataMonthly() {
   }
 }
 
-async function getFeeAndUserDataYearly() {
+async function getArbFeeAndUserDataYearly() {
   const sql = `
     SELECT
     DATE_TRUNC('year', BLOCK_TIMESTAMP) AS year,
@@ -92,7 +92,7 @@ async function getFeeAndUserDataYearly() {
   }
 }
 
-async function getFeeAndUserData60Days() {
+async function getArbFeeAndUserData60Days() {
   const sql = `
     SELECT
     DATEADD(DAY, 
@@ -118,4 +118,9 @@ async function getFeeAndUserData60Days() {
 }
 
 
-module.exports = getFeeAndUserData60Days;
+module.exports = {
+  getArbFeeAndUserDataQuaterly,
+  getArbFeeAndUserDataQuaterly,
+  getArbFeeAndUserDataYearly,
+  getArbFeeAndUserData60Days
+};

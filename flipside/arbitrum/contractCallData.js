@@ -1,6 +1,5 @@
 const flipside = require("../flipside");
 
-//RENAME ALL FUNCTION TO BE OF ARBITRIUM
 
 function calculatePercentage(res){
   for (let i = 0; i < res.records.length; i++) {
@@ -17,7 +16,7 @@ function calculatePercentage(res){
   return res.records;
 }
 
-async function getContractOriginatedDataQuaterly() {
+async function getArbContractOriginatedDataQuaterly() {
   const sql = `WITH ContractData AS (
     SELECT
         ADDRESS,
@@ -47,7 +46,7 @@ ORDER BY
   }
 }
 
-async function getContractOriginatedDataMonthly() {
+async function getArbContractOriginatedDataMonthly() {
   const sql = `WITH ContractData AS (
     SELECT
         ADDRESS,
@@ -77,7 +76,7 @@ ORDER BY
   }
 }
 
-async function getContractOriginatedData60Days() {
+async function getArbContractOriginatedData60Days() {
   const sql = `WITH ContractData AS (
     SELECT
         ADDRESS,
@@ -109,7 +108,7 @@ ORDER BY
   }
 }
 
-async function getContractOriginatedDataYearly() {
+async function getArbContractOriginatedDataYearly() {
   const sql = `WITH ContractData AS (
     SELECT
         ADDRESS,
@@ -140,8 +139,8 @@ ORDER BY
 }
 
 module.exports = {
-  getContractOriginatedDataQuaterly,
-  getContractOriginatedDataMonthly,
-  getContractOriginatedData60Days,
-  getContractOriginatedDataYearly,
+  getArbContractOriginatedDataQuaterly,
+  getArbContractOriginatedDataMonthly,
+  getArbContractOriginatedData60Days,
+  getArbContractOriginatedDataYearly,
 };
