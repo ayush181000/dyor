@@ -36,6 +36,7 @@ app.use(xss());
 app.get('/', (req, res) => {
     res.send('Server started successfully');
 });
+app.use('/', require('./routes/authRoutes'));
 
 app.all('*', (req, res, next) => {
     next(new AppError(`Can't find ${req.originalUrl} on this server`, 404));
