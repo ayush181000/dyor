@@ -7,6 +7,12 @@ const signupSchema = Joi.object({
     referId: Joi.string().optional()
 })
 
+const loginSchema = Joi.object({
+    email: Joi.string().required().email(),
+    password: Joi.string().required()
+})
+
 module.exports = {
-    signupSchema
+    signupSchema,
+    loginSchema
 }
