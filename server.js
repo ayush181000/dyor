@@ -1,6 +1,7 @@
 const express = require('express');
 const morgan = require('morgan');
 const mongoose = require('mongoose');
+const cors = require('cors');
 const helmet = require('helmet');
 const mongoSanitize = require('express-mongo-sanitize');
 const xss = require('xss-clean');
@@ -13,6 +14,9 @@ require('dotenv').config();
 const app = express();
 
 // 1) GLOBAL MIDDLEWARES
+
+// Add cross origin
+app.use(cors());
 
 // Set security HTTP headers
 app.use(helmet());
