@@ -1,8 +1,8 @@
 const flipside = require("../flipside");
 const feeAndUserDataUtil = require("../feeAndUserDataUtil");
 
-async function getArbFeeAndUserDataQuaterly() {
-  const sql = feeAndUserDataUtil.getQuaterlyFeeAndUserDataSQL("ethereum");
+async function getFeeAndUserDataQuaterly(chain) {
+  const sql = feeAndUserDataUtil.getQuaterlyFeeAndUserDataSQL(chain);
   try {
     const res = await flipside.query.run({ sql: sql });
     return feeAndUserDataUtil.calculatePercentage(res);
@@ -11,8 +11,8 @@ async function getArbFeeAndUserDataQuaterly() {
   }
 }
 
-async function getArbFeeAndUserDataMonthly() {
-  const sql = feeAndUserDataUtil.getMonthlyFeeAndUserDataSQL("ethereum");
+async function getFeeAndUserDataMonthly(chain) {
+  const sql = feeAndUserDataUtil.getMonthlyFeeAndUserDataSQL(chain);
   try {
     const res = await flipside.query.run({ sql: sql });
     return feeAndUserDataUtil.calculatePercentage(res);
@@ -21,8 +21,8 @@ async function getArbFeeAndUserDataMonthly() {
   }
 }
 
-async function getArbFeeAndUserDataYearly() {
-  const sql = feeAndUserDataUtil.getYearlyFeeAndUserDataSQL("ethereum");
+async function getFeeAndUserDataYearly(chain) {
+  const sql = feeAndUserDataUtil.getYearlyFeeAndUserDataSQL(chain);
   try {
     const res = await flipside.query.run({ sql: sql });
     return feeAndUserDataUtil.calculatePercentage(res);
@@ -31,8 +31,8 @@ async function getArbFeeAndUserDataYearly() {
   }
 }
 
-async function getArbFeeAndUserData60Days() {
-  const sql = feeAndUserDataUtil.getLast60DayFeeAndUserDataSQL("ethereum");
+async function getFeeAndUserData60Days(chain) {
+  const sql = feeAndUserDataUtil.getLast60DayFeeAndUserDataSQL(chain);
   try {
     const res = await flipside.query.run({ sql: sql });
     return feeAndUserDataUtil.calculatePercentage(res);
@@ -42,8 +42,8 @@ async function getArbFeeAndUserData60Days() {
 }
 
 module.exports = {
-  getArbFeeAndUserDataQuaterly,
-  getArbFeeAndUserDataMonthly,
-  getArbFeeAndUserDataYearly,
-  getArbFeeAndUserData60Days,
+  getFeeAndUserDataQuaterly,
+  getFeeAndUserDataMonthly,
+  getFeeAndUserDataYearly,
+  getFeeAndUserData60Days,
 };
