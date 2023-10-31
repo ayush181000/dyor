@@ -2,7 +2,6 @@ const axios = require("axios");
 
 const DEFI_LLAMA_URL = `https://api.llama.fi/`;
 
-
 async function getHistoricalTVL(chain) {
   try {
     const res = await axios.get(
@@ -21,163 +20,66 @@ async function getHistoricalTVL(chain) {
 
 function timestampToDateString(timestamp) {
   const date = new Date(timestamp * 1000);
-  return date.toDateString();
+  return date.toISOString().slice(0, 10);
 }
 
-function getMonthlyTVL(dailyData) {
-  const data = dailyData;
-  const groupedData = {};
-  data.forEach((item) => {
-    const date = new Date(item.date);
-    const monthKey = `${date.getFullYear()}-${String(
-      date.getMonth() + 1
-    ).padStart(2, "0")}`;
+function calculatePercentageChange(oldValue, newValue) {
+  if (oldValue === 0) return null;
+  return ((newValue - oldValue) / oldValue) * 100;
+}
 
-    if (!groupedData[monthKey]) {
-      groupedData[monthKey] = {
-        month: monthKey,
-        totalTvl: 0,
-        count: 0,
-      };
-    }
+function getTVLDataWithComparison(tvlData) {
+  const today = new Date();
+  const thirtyDaysAgo = new Date();
+  thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+  const sixtyDaysAgo = new Date();
+  sixtyDaysAgo.setDate(sixtyDaysAgo.getDate() - 60);
+  const ninetyDaysAgo = new Date();
+  ninetyDaysAgo.setDate(ninetyDaysAgo.getDate() - 90);
+  const oneYearAgo = new Date();
+  oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
 
-    groupedData[monthKey].totalTvl += item.tvl;
-    groupedData[monthKey].count++;
-  });
-  const values = Object.values(groupedData);
-  for (let i = 0; i < values.length; i++) {
-    if (i == 0) {
-      values[0].change = "N.A";
-    } else {
-      values[i].change =
-        ((values[i].totalTvl - values[i - 1].totalTvl) /
-          values[i - 1].totalTvl) *
-        100;
+  const todayDateString = today.toISOString().slice(0, 10);
+  const thirtyDaysAgoDateString = thirtyDaysAgo.toISOString().slice(0, 10);
+  const sixtyDaysAgoDateString = sixtyDaysAgo.toISOString().slice(0, 10);
+  const ninetyDaysAgoDateString = ninetyDaysAgo.toISOString().slice(0, 10);
+  const oneYearAgoDateString = oneYearAgo.toISOString().slice(0, 10);
+
+  let todayTVL = null;
+  let thirtyDaysAgoTVL = null;
+  let sixtyDaysAgoTVL = null;
+  let ninetyDaysAgoTVL = null;
+  let oneYearAgoTVL = null;
+
+  for (const entry of tvlData) {
+    if (entry.date === todayDateString) {
+      todayTVL = entry.tvl;
+    } else if (entry.date === thirtyDaysAgoDateString) {
+      thirtyDaysAgoTVL = entry.tvl;
+    } else if (entry.date === sixtyDaysAgoDateString) {
+      sixtyDaysAgoTVL = entry.tvl;
+    } else if (entry.date === ninetyDaysAgoDateString) {
+      ninetyDaysAgoTVL = entry.tvl;
+    } else if (entry.date === oneYearAgoDateString) {
+      oneYearAgoTVL = entry.tvl;
     }
   }
 
-  console.log(values);
-  return values;
+  const percentageChanges = {
+    "30 Days Change": calculatePercentageChange(thirtyDaysAgoTVL, todayTVL),
+    "60 Days Change": calculatePercentageChange(sixtyDaysAgoTVL, todayTVL),
+    "90 Days Change": calculatePercentageChange(ninetyDaysAgoTVL, todayTVL),
+    "1 Year Change": calculatePercentageChange(oneYearAgoTVL, todayTVL),
+  };
+
+  return {
+    today: todayTVL,
+    last30day: thirtyDaysAgoTVL,
+    last60day: sixtyDaysAgoTVL,
+    last90day: ninetyDaysAgoTVL,
+    lasyYear: oneYearAgoTVL,
+    comparisons: percentageChanges,
+  };
 }
 
-function getYearlyTVL(dailyData) {
-  const data = dailyData;
-  const groupedData = {};
-  data.forEach((item) => {
-    const date = new Date(item.date);
-    const yearKey = date.getFullYear().toString();
-
-    if (!groupedData[yearKey]) {
-      groupedData[yearKey] = {
-        month: yearKey,
-        totalTvl: 0,
-        count: 0,
-      };
-    }
-
-    groupedData[yearKey].totalTvl += item.tvl;
-    groupedData[yearKey].count++;
-  });
-  const values = Object.values(groupedData);
-  for (let i = 0; i < values.length; i++) {
-    if (i == 0) {
-      values[0].change = "N.A";
-    } else {
-      values[i].change =
-        ((values[i].totalTvl - values[i - 1].totalTvl) /
-          values[i - 1].totalTvl) *
-        100;
-    }
-  }
-  console.log(values);
-  return values;
-}
-
-function getQuaterlyTVL(dailyData) {
-  const data = dailyData;
-  const groupedData = {};
-  data.forEach((item) => {
-    const date = new Date(item.date);
-    const quarterKey = `${date.getFullYear()}-Q${Math.floor(
-      (date.getMonth() + 3) / 3
-    )}`;
-
-    if (!groupedData[quarterKey]) {
-      groupedData[quarterKey] = {
-        month: quarterKey,
-        totalTvl: 0,
-        count: 0,
-      };
-    }
-
-    groupedData[quarterKey].totalTvl += item.tvl;
-    groupedData[quarterKey].count++;
-  });
-  const values = Object.values(groupedData);
-  for (let i = 0; i < values.length; i++) {
-    if (i == 0) {
-      values[0].change = "N.A";
-    } else {
-      values[i].change =
-        ((values[i].totalTvl - values[i - 1].totalTvl) /
-          values[i - 1].totalTvl) *
-        100;
-    }
-  }
-  console.log(values);
-  return values;
-}
-
-function get60DaysTVL(dailyData) {
-  const data = dailyData;
-  const groupedData = [];
-  let currentIntervalStart = new Date(data[0].date);
-  let intervalTvl = 0;
-
-  for (const item of data) {
-    const currentDate = new Date(item.date);
-    while (currentDate - currentIntervalStart >= 60 * 24 * 60 * 60 * 1000) {
-      // Push the interval data to the result
-      groupedData.push({
-        interval_start: currentIntervalStart.toDateString(),
-        interval_end: new Date(
-          currentIntervalStart.getTime() + 60 * 24 * 60 * 60 * 1000
-        ).toDateString(),
-        totalTvl: intervalTvl,
-      });
-
-      // Move to the next interval
-      currentIntervalStart = new Date(
-        currentIntervalStart.getTime() + 60 * 24 * 60 * 60 * 1000
-      );
-      intervalTvl = 0;
-    }
-
-    intervalTvl += item.tvl;
-  }
-
-  // Handle the last interval
-  groupedData.push({
-    interval_start: currentIntervalStart.toDateString(),
-    interval_end: new Date(
-      currentIntervalStart.getTime() + 60 * 24 * 60 * 60 * 1000
-    ).toDateString(),
-    totalTvl: intervalTvl,
-  });
-
-  const values = groupedData;
-  for (let i = 0; i < values.length; i++) {
-    if (i == 0) {
-      values[0].change = "N.A";
-    } else {
-      values[i].change =
-        ((values[i].totalTvl - values[i - 1].totalTvl) /
-          values[i - 1].totalTvl) *
-        100;
-    }
-  }
-  console.log(values);
-  return values;
-}
-
-module.exports = { getHistoricalTVL, getMonthlyTVL, getYearlyTVL, getQuaterlyTVL, get60DaysTVL };
+module.exports = { getHistoricalTVL, getTVLDataWithComparison };
