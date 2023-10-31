@@ -1,33 +1,62 @@
+const mongoose = require('mongoose');
+const { CronJob } = require('cron');
+
 const dailyData = require("./dailyData");
 const CONFIG = require("./config");
 
-async function dailyCron(){
-    const date = new Date();
+const TokenData = require('../models/tokenData');
+
+console.log('Cron script executed')
+
+const job = new CronJob(
+    '0 12 * * *', // cronTime
+    dailyCron, // onTick
+    function () {
+        console.log("Cron Job Succesfull")
+    }, // onComplete
+    true, // start
+    'Asia/Kolkata' // timeZone
+);
+
+
+async function dailyCron() {
+    // Database connection
+    mongoose
+        .connect(process.env.DATABASE, {
+            useNewUrlParser: true
+        })
+        .then(() => {
+            console.log('DB connection successful');
+        });
+    const date = getLocalDate();
+
     let data = {};
+    console.log(date);
+
 
     //TVL DATA
     const tvlData = await dailyData.dailyTVLALL();
 
     //PRICE AND SUPPLY DATA
     let id = '';
-    for(const TOKEN in CONFIG){
-        id = id + "," +CONFIG[TOKEN].CMC_ID;
+    for (const TOKEN in CONFIG) {
+        id = id + "," + CONFIG[TOKEN].CMC_ID;
     }
     const priceAndSupply = await dailyData.getSupplyAndPrice(id.substring(1));
 
     for (const TOKEN in CONFIG) {
-        
+
         // const ttvData = await dailyData.dailyTTV(CONFIG[TOKEN]);
-        const feeAndUserData  = await dailyData.dailyFeeAndUser(CONFIG[TOKEN]);
+        const feeAndUserData = await dailyData.dailyFeeAndUser(CONFIG[TOKEN]);
 
         let tvl = 0;
 
-        for(const item of tvlData ){
+        for (const item of tvlData) {
             if (
-              CONFIG[TOKEN].SYMBOL == item.symbol ||
-              CONFIG[TOKEN].SYMBOL == item.tokenSymbol
+                CONFIG[TOKEN].SYMBOL == item.symbol ||
+                CONFIG[TOKEN].SYMBOL == item.tokenSymbol
             ) {
-              tvl += item.tvl;
+                tvl += item.tvl;
             }
         }
 
@@ -39,7 +68,7 @@ async function dailyCron(){
         let volume = 0;
 
         const cmcData = priceAndSupply[CONFIG[TOKEN].CMC_ID];
-        if(cmcData){
+        if (cmcData) {
             circulatingSupply = cmcData.circulating_supply;
             price = cmcData.quote.USD.price;
             totalSupply = cmcData.total_supply;
@@ -48,26 +77,55 @@ async function dailyCron(){
             volume = cmcData.quote.USD.volume_24h;
         }
 
-        const holders = await dailyData.dailyHolderData(CONFIG[TOKEN].CHAIN_ID,CONFIG[TOKEN].ADDRESS);
+        const holders = await dailyData.dailyHolderData(CONFIG[TOKEN].CHAIN_ID, CONFIG[TOKEN].ADDRESS);
+
+        const writtenData = await TokenData.create({
+            tokenName: CONFIG[TOKEN].NAME,
+            date: date,
+            price: price,
+            tvl: tvl,
+            ttv: volume,
+            fdv: fdv,
+            holders: holders,
+            circulatingSupply: circulatingSupply,
+            totalSupply: totalSupply,
+            daily_fee: feeAndUserData.daily_fee === 'NA' ? 0 : feeAndUserData.daily_fee,
+        });
 
         data[TOKEN] = {
-          date: date,
-          name: CONFIG[TOKEN].NAME,
-          tvl: tvl,
-          price: price,
-          circulatingSupply: circulatingSupply,
-          totalSupply: totalSupply,
-          ttv: volume,
-          fdv : fdv,
-          holders : holders,
-          active_users: 'NA',
-          daily_fee: feeAndUserData.daily_fee,
+            date: date,
+            name: CONFIG[TOKEN].NAME,
+            tvl: tvl,
+            price: price,
+            circulatingSupply: circulatingSupply,
+            totalSupply: totalSupply,
+            ttv: volume,
+            fdv: fdv,
+            holders: holders,
+            active_users: 'NA',
+            daily_fee: feeAndUserData.daily_fee,
         };
+
+        // throw new Error("MAnually triggered");
     }
 
     console.log(data);
 
 }
 
+function getLocalDate() {
+    // Create a new Date object for the current date and time
+    const currentDate = new Date();
+    currentDate.setHours(0, 0, 0, 0);
 
-dailyCron()
+    // Get the time zone offset for India in minutes
+    const timeZoneOffsetInMinutes = 330; // India Standard Time (IST) is UTC+5:30
+
+    // Adjust the current date and time based on the time zone offset
+    const currentDateInIndia = new Date(currentDate.getTime() + timeZoneOffsetInMinutes * 60000);
+
+
+    return currentDateInIndia;
+}
+
+// dailyCron()
