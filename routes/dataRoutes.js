@@ -1,7 +1,7 @@
 const router = require('express').Router();
 
-const { getData } = require("../controllers/dataController");
+const { homepage } = require("../controllers/dataController");
 
-router.get('/getData', getData);
+router.get('/homepage', homepage);
 
 module.exports = router;

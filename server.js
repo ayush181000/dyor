@@ -44,6 +44,7 @@ app.get('/', (req, res) => {
 });
 app.use('/', require('./routes/authRoutes'));
 app.use('/newsletter', require('./routes/newsletterRoutes'));
+app.use('/data', require('./routes/dataRoutes'));
 
 app.all('*', (req, res, next) => {
     next(new AppError(`Can't find ${req.originalUrl} on this server`, 404));
