@@ -4,7 +4,7 @@ const TokenData = require('../models/tokenData');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
 const { getLocalDate, getOlderDate } = require("../utils/dateUtil");
-const { historicalStaticData } = require("./historicalDataUtil");
+const { historicalStaticData, tokenTradingVolMetric } = require("./historicalDataUtil");
 
 const tokenNames = ["Optimism", "Arbitrum", "Polygon", "Ethereum", "Lido", "Uniswap", "Maker", "Aave", "curve-dex", "Compound", "Gravivty-Finance", "Synthetix", "Liquity", "Kyberswap-Elastic", "Bancor", "The Graph", "Chainlink", "TruFi", "Centrifuge", "Ankr", "Loopring", "Render", "Rocket-Pool", "Frax", "Rollbit"];
 
@@ -38,10 +38,11 @@ exports.dashboard = catchAsync(async (req, res, next) => {
 
 
     const priceMetric = await historicalStaticData(tokenName);
+    const ttvMetric = await tokenTradingVolMetric(tokenName);
 
 
 
-    res.send({ status: "success", tokenName, ...priceMetric });
+    res.send({ status: "success", tokenName, ...priceMetric, ttvMetric });
 })
 
 // const priceData = await getPrice('24h', chainName);

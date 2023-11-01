@@ -68,9 +68,78 @@ const historicalStaticData = async (tokenName) => {
     }
 }
 
+const tokenTradingVolMetric = async (tokenName) => {
+
+    const { ttv: latestTtv } = await TokenData.findOne({ tokenName, date: getLocalDate() }) || { ttv: null };
+
+    const sum30days = await getTTVinDays(tokenName, '30d');
+
+    const sum60days = await getTTVinDays(tokenName, '60d');
+
+    const sum90days = await getTTVinDays(tokenName, '90d');
+
+    const sum365days = await getTTVinDays(tokenName, '365d');
+
+    const sumOf60daysAfter60days = await getTTVinDaysDiff(tokenName, getOlderDate('120d'), getOlderDate('60d'));
+
+    const sumOf90daysAfter90days = await getTTVinDaysDiff(tokenName, getOlderDate('180d'), getOlderDate('90d'));
+
+    const sumOf365daysAfter365days = await getTTVinDaysDiff(tokenName, getOlderDate('730d'), getOlderDate('365d'));
+
+
+    return {
+        latestTtv,
+        sum30days,
+        sum60days,
+        sum90days,
+        sum365days,
+        percChange30d: percChange(sum30days, sum60days - sum30days),
+        percChange60d: percChange(sum60days, sumOf60daysAfter60days),
+        percChange90d: percChange(sum90days, sumOf90daysAfter90days),
+        percChange365d: percChange(sum365days, sumOf365daysAfter365days),
+    }
+}
+
+const getTTVinDays = async (tokenName, days) => {
+    return await TokenData.aggregate([
+        { $match: { tokenName, date: { $gte: getOlderDate(days) } } },
+        {
+            $group: {
+                _id: "$tokenName",
+                total_ttv: {
+                    $sum: "$ttv",
+                },
+            }
+        }
+    ]).then((arr) => {
+        return arr[0]?.total_ttv
+    });
+}
+
+const getTTVinDaysDiff = async (tokenName, startDate, endDate) => {
+    return await TokenData.aggregate([
+        { $match: { tokenName, date: { $gte: startDate, $lt: endDate } } },
+        {
+            $group: {
+                _id: "$tokenName",
+                total_ttv: {
+                    $sum: "$ttv",
+                },
+            }
+        }
+    ]).then((arr) => {
+        // console.log(arr)
+        return arr[0]?.total_ttv || 0
+    });
+}
+
 
 const percChange = (a, b) => {
+    if (b == 0) {
+        // infinity case
+        return '∞';
+    }
     return (a - b) / b * 100;
 }
 
-module.exports = { historicalStaticData }
+module.exports = { historicalStaticData, tokenTradingVolMetric }
