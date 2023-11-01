@@ -132,4 +132,4 @@ function getLocalDate() {
     return currentDateInIndia;
 }
 
-dailyCron()
+// dailyCron()
