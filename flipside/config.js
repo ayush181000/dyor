@@ -16,7 +16,7 @@ const CONFIG = {
     DECIMAL: 18,
     SYMBOL: "ARB",
     CHAIN: "arbitrum",
-    CHAIN_ID: 42162,
+    CHAIN_ID: 42161,
     CMC_ID: 11841,
   },
   POLYGON: {
