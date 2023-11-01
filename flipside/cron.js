@@ -91,22 +91,22 @@ async function dailyCron() {
             holders: holders,
             circulatingSupply: circulatingSupply,
             totalSupply: totalSupply,
-            active_users: null,
+            active_users: feeAndUserData.active_users,
             daily_fee: feeAndUserData.daily_fee === 'NA' ? null : feeAndUserData.daily_fee,
         });
 
         data[TOKEN] = {
-            date: date,
-            name: CONFIG[TOKEN].NAME,
-            tvl: tvl,
-            price: price,
-            circulatingSupply: circulatingSupply,
-            totalSupply: totalSupply,
-            ttv: volume,
-            fdv: fdv,
-            holders: holders,
-            active_users: 'NA',
-            daily_fee: feeAndUserData.daily_fee,
+          date: date,
+          name: CONFIG[TOKEN].NAME,
+          tvl: tvl,
+          price: price,
+          circulatingSupply: circulatingSupply,
+          totalSupply: totalSupply,
+          ttv: volume,
+          fdv: fdv,
+          holders: holders,
+          active_users: feeAndUserData.active_users,
+          daily_fee: feeAndUserData.daily_fee,
         };
 
         // throw new Error("MAnually triggered");
