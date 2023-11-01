@@ -12,7 +12,7 @@ const tokenDataSchema = mongoose.Schema({
     circulatingSupply: Number,
     totalSupply: Number,
     active_users: Number,
-    daily_fee: Number
+    daily_fee: Number,
 });
 
 
