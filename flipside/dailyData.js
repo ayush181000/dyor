@@ -41,20 +41,20 @@ async function dailyFeeAndUser(CONFIG){
             );
             const fee = res.data.total24h;
 
-            const sql = `SELECT
-  COUNT(DISTINCT FROM_ADDRESS) AS active_users
-FROM
-  ${CONFIG.CHAIN}.core.fact_transactions
-WHERE
-  TO_ADDRESS = '${CONFIG.ADDRESS}'
-  AND STATUS = 'SUCCESS'
-  AND DATE(BLOCK_TIMESTAMP) = CURRENT_DATE();`;
-                const flip = await callFlipside(sql);
-                console.log(flip[0]);
+//             const sql = `SELECT
+//   COUNT(DISTINCT FROM_ADDRESS) AS active_users
+// FROM
+//   ${CONFIG.CHAIN}.core.fact_transactions
+// WHERE
+//   TO_ADDRESS = '${CONFIG.ADDRESS}'
+//   AND STATUS = 'SUCCESS'
+//   AND DATE(BLOCK_TIMESTAMP) = CURRENT_DATE();`;
+//                 const flip = await callFlipside(sql);
+//                 console.log(flip[0]);
 
 
 
-            return { active_users: flip[0].active_users, daily_fee: fee };
+            return { active_users: "NA", daily_fee: fee };
         } catch (error) {
             console.log(error);
             return { active_users: "NA", daily_fee: "NA" };
