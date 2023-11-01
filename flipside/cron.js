@@ -30,8 +30,10 @@ async function dailyCron() {
         });
     const date = getLocalDate();
 
+
     let data = {};
-    console.log(date);
+    // console.log(date);
+    // return;
 
 
     //TVL DATA
@@ -89,7 +91,8 @@ async function dailyCron() {
             holders: holders,
             circulatingSupply: circulatingSupply,
             totalSupply: totalSupply,
-            daily_fee: feeAndUserData.daily_fee === 'NA' ? 0 : feeAndUserData.daily_fee,
+            active_users: null,
+            daily_fee: feeAndUserData.daily_fee === 'NA' ? null : feeAndUserData.daily_fee,
         });
 
         data[TOKEN] = {
@@ -118,8 +121,9 @@ function getLocalDate() {
     const currentDate = new Date();
     currentDate.setHours(0, 0, 0, 0);
 
-    // Get the time zone offset for India in minutes
-    const timeZoneOffsetInMinutes = 330; // India Standard Time (IST) is UTC+5:30
+    const timeZoneOffsetInMinutes = -new Date().getTimezoneOffset();
+    // console.log(currentDate)
+    // console.log(timeZoneOffsetInMinutes)
 
     // Adjust the current date and time based on the time zone offset
     const currentDateInIndia = new Date(currentDate.getTime() + timeZoneOffsetInMinutes * 60000);
@@ -128,4 +132,4 @@ function getLocalDate() {
     return currentDateInIndia;
 }
 
-// dailyCron()
+dailyCron()
