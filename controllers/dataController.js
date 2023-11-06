@@ -38,11 +38,11 @@ exports.dashboard = catchAsync(async (req, res, next) => {
 
 
     const priceMetric = await historicalStaticData(tokenName);
-    const ttvMetric = await tokenTradingVolMetric(tokenName);
+    // const ttvMetric = await tokenTradingVolMetric(tokenName);
 
 
 
-    res.send({ status: "success", tokenName, ...priceMetric, ttvMetric });
+    res.send({ status: "success", tokenName, ...priceMetric });
 })
 
 // const priceData = await getPrice('24h', chainName);
