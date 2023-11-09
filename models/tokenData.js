@@ -17,7 +17,7 @@ const tokenDataSchema = mongoose.Schema({
     daily_fee: Number,
 });
 
-tokenDataSchema.index({ tokenName: 1, date: -1 });
+tokenDataSchema.index({ tokenName: 1, date: 1 }, { unique: true });
 
 const TokenData = mongoose.model('tokenData', tokenDataSchema);
 
