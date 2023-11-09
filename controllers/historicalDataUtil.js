@@ -7,12 +7,14 @@ const historicalStaticData = (async (tokenName) => {
     const { price: latestPrice, circulatingSupply: latestCirculatingSupply, tvl: latestTvl, holders: latestHolders } = await TokenData.findOne({ tokenName, date: getLocalDate() }) || nullObject;
     const { price: price24h, circulatingSupply: circulatingSupply24h, tvl: tvl24h, holders: holders24h } = await TokenData.findOne({ tokenName, date: getOlderDate('24h') }) || nullObject;
     const { price: price30d, circulatingSupply: circulatingSupply30d, tvl: tvl30d, holders: holders30d } = await TokenData.findOne({ tokenName, date: getOlderDate('30d') }) || nullObject;
+    console.log(await TokenData.findOne({ tokenName, date: getOlderDate('30d') }))
     const { price: price60d, circulatingSupply: circulatingSupply60d, tvl: tvl60d, holders: holders60d } = await TokenData.findOne({ tokenName, date: getOlderDate('60d') }) || nullObject;
     const { price: price90d, circulatingSupply: circulatingSupply90d, tvl: tvl90d, holders: holders90d } = await TokenData.findOne({ tokenName, date: getOlderDate('90d') }) || nullObject;
     const { price: price365d, circulatingSupply: circulatingSupply365d, tvl: tvl365d, holders: holders365d } = await TokenData.findOne({ tokenName, date: getOlderDate('365d') }) || nullObject;
 
     const tokenTradingVolumeMetric = await tokenTradingVolMetricFunc(tokenName);
     const feeMetric = await feeMetricFunc(tokenName);
+    // console.log("imp", latestPrice, price30d, percChange(latestPrice, price30d))
 
     return {
         priceMetric: {
@@ -222,7 +224,9 @@ const getFeeInDaysDiff = (async (tokenName, startDate, endDate) => {
 })
 
 const percChange = (a, b) => {
-    if (b == 0) {
+    // console.log(a, b);
+    if (a == null) a = 0;
+    if (b == 0 || b == null) {
         // infinity case
         return '∞';
     }

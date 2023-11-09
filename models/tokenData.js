@@ -2,14 +2,16 @@ const mongoose = require('mongoose');
 
 const tokenDataSchema = mongoose.Schema({
     tokenName: { type: String, required: true },
-    date: Date,
+    date: { type: Date },
     price: Number,
     tvl: Number,
     ttv: Number,
+    ttvChangePercentages: String,
     fdv: Number,
     holders: Number,
     activeHolders: Number,
     circulatingSupply: Number,
+    circulatingSupplyChangePercentages: String,
     totalSupply: Number,
     active_users: Number,
     daily_fee: Number,
