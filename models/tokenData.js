@@ -15,6 +15,9 @@ const tokenDataSchema = mongoose.Schema({
     totalSupply: Number,
     active_users: Number,
     daily_fee: Number,
+
+    stakingRatio: Number,
+    stakingRatioChangePercentages: String
 });
 
 tokenDataSchema.index({ tokenName: 1, date: 1 }, { unique: true });

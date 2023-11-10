@@ -3,7 +3,7 @@ const TokenData = require('../models/tokenData');
 // error handling
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
-const { getLocalDate, getOlderDate } = require("../utils/dateUtil");
+const { getOlderDate } = require("../utils/dateUtil");
 const { historicalStaticData } = require("./historicalDataUtil");
 
 const tokenNames = ["Optimism", "Arbitrum", "Polygon", "Ethereum", "Lido", "Uniswap", "Maker", "Aave", "curve-dex", "Compound", "Gravivty-Finance", "Synthetix", "Liquity", "Kyberswap-Elastic", "Bancor", "The Graph", "Chainlink", "TruFi", "Centrifuge", "Ankr", "Loopring", "Render", "Rocket-Pool", "Frax", "Rollbit"];
