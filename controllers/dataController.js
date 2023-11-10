@@ -4,29 +4,39 @@ const TokenData = require('../models/tokenData');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
 const { getLocalDate, getOlderDate } = require("../utils/dateUtil");
-const { historicalStaticData, tokenTradingVolMetric } = require("./historicalDataUtil");
+const { historicalStaticData } = require("./historicalDataUtil");
 
 const tokenNames = ["Optimism", "Arbitrum", "Polygon", "Ethereum", "Lido", "Uniswap", "Maker", "Aave", "curve-dex", "Compound", "Gravivty-Finance", "Synthetix", "Liquity", "Kyberswap-Elastic", "Bancor", "The Graph", "Chainlink", "TruFi", "Centrifuge", "Ankr", "Loopring", "Render", "Rocket-Pool", "Frax", "Rollbit"];
 
 exports.homepage = catchAsync(async (req, res, next) => {
     let chainNames = tokenNames;
+    let data = [];
 
     if (req.query.tokenName) {
         chainNames = req.query.tokenName.split(",");
         console.log(chainNames);
     }
 
-    const data = await TokenData.find({
-        tokenName: { $in: chainNames },
-        date: getLocalDate()
-    });
-
-    if (data.length == 0) {
-        return next(new AppError('Requested data does not exist', 400));
-    }
-
-    res.send({ status: "success", data });
+    runAllFetch(chainNames).then(promise => {
+        data = promise;
+        res.send({ status: "success", data });
+    }).catch(err => {
+        return next(new AppError('Internal Error', 400));
+    }).finally(() => {
+        if (data.length == 0) {
+            return next(new AppError('Requested data does not exist', 400));
+        }
+    })
 });
+
+function runAllFetch(chainNames) {
+    let promises = [];
+    for (let i = 0; i < chainNames.length; i++) {
+        promises.push(TokenData.find({ tokenName: chainNames[i] }).sort({ date: -1 }).limit(1));
+    }
+    return Promise.all(promises);
+}
+
 
 exports.dashboard = catchAsync(async (req, res, next) => {
     if (!req.query.tokenName) {
