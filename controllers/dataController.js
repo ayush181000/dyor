@@ -18,7 +18,7 @@ exports.homepage = catchAsync(async (req, res, next) => {
     }
 
     runAllFetch(chainNames).then(promise => {
-        data = promise;
+        promise.forEach((el) => { data.push(...el) });
         res.send({ status: "success", data });
     }).catch(err => {
         return next(new AppError('Internal Error', 400));
