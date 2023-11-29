@@ -23,7 +23,9 @@ const tokenDataSchema = mongoose.Schema({
     circulatingSupplyChangePercentages: String,
 
     stakingRatio: Number,
-    stakingRatioChangePercentages: String
+    stakingRatioChangePercentages: String,
+
+    marketCap: Number
 });
 
 tokenDataSchema.index({ tokenName: 1, date: 1 }, { unique: true });
