@@ -24,9 +24,15 @@ async function dailyFeeAndUser(CONFIG){
      WHERE
      STATUS = 'SUCCESS' AND DATE(BLOCK_TIMESTAMP) = CURRENT_DATE();`;
 
+     //Figure out why defillama is sending bad fee data?
         try {
             const res = await callFlipside(sql);
             console.log(res[0]);
+            const res2 = await axios.get(
+              `https://api.llama.fi/summary/fees/${CONFIG.NAME}?dataType=dailyFees`
+            );
+            console.log(res2.data.total24h);
+            res[0].daily_fee = res2.data.total24h;
             return res[0];
         } catch (error) {
             console.log(error);
@@ -67,6 +73,7 @@ async function dailyFeeAndUser(CONFIG){
     
 }
 
+//Deprecated
 async function dailyTTV(CONFIG){
 
     let sql;
