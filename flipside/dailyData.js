@@ -15,6 +15,29 @@ async function callFlipside(sql){
 
 async function dailyFeeAndUser(CONFIG){
 
+  if (CONFIG.NAME == "Osmosis") {
+    const sql = `SELECT
+     COUNT(DISTINCT TX_FROM) AS active_users
+     FROM
+     osmosis.core.fact_transactions
+     WHERE
+     DATE(BLOCK_TIMESTAMP) = CURRENT_DATE();`;
+
+    try {
+      const res = await callFlipside(sql);
+      console.log(res[0]);
+      const res2 = await axios.get(
+        `https://api.llama.fi/overview/fees/osmosis?excludeTotalDataChart=true&excludeTotalDataChartBreakdown=true&dataType=dailyFees`
+      );
+      console.log(res2.data.total24h);
+      res[0].daily_fee = res2.data.total24h;
+      return res[0];
+    } catch (error) {
+      console.log(error);
+      return { active_users: 0, daily_fee: 0 };
+    }
+  }
+
     if(CONFIG.IDENTIFIER == "CHAIN"){
         const sql = `SELECT
      COUNT(DISTINCT FROM_ADDRESS) AS active_users,
@@ -27,6 +50,11 @@ async function dailyFeeAndUser(CONFIG){
         try {
             const res = await callFlipside(sql);
             console.log(res[0]);
+            const res2 = await axios.get(
+              `https://api.llama.fi/summary/fees/${CONFIG.NAME}?dataType=dailyFees`
+            );
+            console.log(res2.data.total24h);
+            res[0].daily_fee = res2.data.total24h;
             return res[0];
         } catch (error) {
             console.log(error);
@@ -67,6 +95,7 @@ async function dailyFeeAndUser(CONFIG){
     
 }
 
+//Deprecated
 async function dailyTTV(CONFIG){
 
     let sql;
