@@ -55,10 +55,10 @@ async function dailyCron() {
 
         for (const item of tvlData) {
             if (
-                CONFIG[TOKEN].SYMBOL == item.symbol ||
-                CONFIG[TOKEN].SYMBOL == item.tokenSymbol
+              CONFIG[TOKEN].CMC_ID == item.cmcId ||
+              CONFIG[TOKEN].CMC_ID == item.cmcId
             ) {
-                tvl += item.tvl;
+              item.tvl == 0 ? console.log() : tvl = item.tvl;
             }
         }
 
