@@ -22,12 +22,12 @@ const job = new CronJob(
 async function dailyCron() {
     // Database connection
     mongoose
-        .connect(process.env.DATABASE, {
-            useNewUrlParser: true
-        })
-        .then(() => {
-            console.log('DB connection successful');
-        });
+      .connect(process.env.DATABASE, {
+        useNewUrlParser: true,
+      })
+      .then(() => {
+        console.log("DB connection successful");
+      });
     const date = getLocalDate();
 
 
