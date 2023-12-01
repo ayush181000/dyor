@@ -2,14 +2,14 @@ const TokenData = require("../models/tokenData");
 const { getLocalDate, getOlderDate } = require("../utils/dateUtil");
 
 const historicalStaticData = (async (tokenName) => {
-    const nullObject = { price: null, circulatingSupply: null, tvl: null, holders: null };
+    const nullObject = { price: null, circulatingSupply: null, tvl: null, holders: null, activeHolders: null };
 
-    const { price: latestPrice, circulatingSupply: latestCirculatingSupply, tvl: latestTvl, holders: latestHolders } = await TokenData.findOne({ tokenName, date: getLocalDate() }) || nullObject;
-    const { price: price24h, circulatingSupply: circulatingSupply24h, tvl: tvl24h, holders: holders24h } = await TokenData.findOne({ tokenName, date: getOlderDate('24h') }) || nullObject;
-    const { price: price30d, circulatingSupply: circulatingSupply30d, tvl: tvl30d, holders: holders30d } = await TokenData.findOne({ tokenName, date: getOlderDate('30d') }) || nullObject;
-    const { price: price60d, circulatingSupply: circulatingSupply60d, tvl: tvl60d, holders: holders60d } = await TokenData.findOne({ tokenName, date: getOlderDate('60d') }) || nullObject;
-    const { price: price90d, circulatingSupply: circulatingSupply90d, tvl: tvl90d, holders: holders90d } = await TokenData.findOne({ tokenName, date: getOlderDate('90d') }) || nullObject;
-    const { price: price365d, circulatingSupply: circulatingSupply365d, tvl: tvl365d, holders: holders365d } = await TokenData.findOne({ tokenName, date: getOlderDate('365d') }) || nullObject;
+    const { price: latestPrice, circulatingSupply: latestCirculatingSupply, tvl: latestTvl, holders: latestHolders, activeHolders: latestActiveHolders } = await TokenData.findOne({ tokenName, date: getLocalDate() }) || nullObject;
+    const { price: price24h, circulatingSupply: circulatingSupply24h, tvl: tvl24h, holders: holders24h, activeHolders: activeHolders24h } = await TokenData.findOne({ tokenName, date: getOlderDate('24h') }) || nullObject;
+    const { price: price30d, circulatingSupply: circulatingSupply30d, tvl: tvl30d, holders: holders30d, activeHolders: activeHolders30d } = await TokenData.findOne({ tokenName, date: getOlderDate('30d') }) || nullObject;
+    const { price: price60d, circulatingSupply: circulatingSupply60d, tvl: tvl60d, holders: holders60d, activeHolders: activeHolders60d } = await TokenData.findOne({ tokenName, date: getOlderDate('60d') }) || nullObject;
+    const { price: price90d, circulatingSupply: circulatingSupply90d, tvl: tvl90d, holders: holders90d, activeHolders: activeHolders90d } = await TokenData.findOne({ tokenName, date: getOlderDate('90d') }) || nullObject;
+    const { price: price365d, circulatingSupply: circulatingSupply365d, tvl: tvl365d, holders: holders365d, activeHolders: activeHolders365d } = await TokenData.findOne({ tokenName, date: getOlderDate('365d') }) || nullObject;
 
     const tokenTradingVolumeMetric = await tokenTradingVolMetricFunc(tokenName);
     const feeMetric = await feeMetricFunc(tokenName);
@@ -68,6 +68,20 @@ const historicalStaticData = (async (tokenName) => {
             percChange90d: percChange(latestHolders, holders90d),
             percChange365d: percChange(latestHolders, holders365d)
         },
+        activeHolderMetric: {
+            latestActiveHolders,
+            activeHolders24h,
+            activeHolders30d,
+            activeHolders60d,
+            activeHolders90d,
+            activeHolders365d,
+            percChange24h: percChange(latestActiveHolders, activeHolders24h),
+            percChange30d: percChange(latestActiveHolders, activeHolders30d),
+            percChange60d: percChange(latestActiveHolders, activeHolders60d),
+            percChange90d: percChange(latestActiveHolders, activeHolders90d),
+            percChange365d: percChange(latestActiveHolders, activeHolders365d)
+        },
+
         tokenTradingVolumeMetric,
         feeMetric
 

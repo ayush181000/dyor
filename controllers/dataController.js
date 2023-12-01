@@ -13,6 +13,7 @@ const tokenNames = ["Optimism", "Arbitrum", "Polygon", "Ethereum", "Lido", "Unis
 
 exports.homepage = catchAsync(async (req, res, next) => {
     let chainNames = tokenNames;
+    // let chainNames = ["Chainlink"];
     let data = [];
 
     if (req.query.tokenName) {
@@ -21,9 +22,58 @@ exports.homepage = catchAsync(async (req, res, next) => {
     }
 
     runAllFetch(chainNames).then(promise => {
-        promise.forEach((el) => { data.push(...el) });
+        promise.forEach((el) => {
+            // console.log(el);
+
+            let tempData = {
+                tvl: null,
+                fdv: null,
+                holders: null,
+                activeHolders: null,
+                totalSupply: null,
+                daily_fee: null,
+                price: null,
+                ttv: null,
+                circulatingSupply: null,
+                stakingRatio: null,
+                marketCap: null
+            };
+
+            for (let i = 0; i < el.length; i++) {
+                const { _doc } = el[i];
+
+                tempData = {
+                    tokenName: _doc['tokenName'],
+                    date: tempData['date'] || _doc['date'],
+
+                    tvl: tempData['tvl'] == null && _doc['tvl'] && (_doc['tvl'] > 0) ? _doc['tvl'] : tempData['tvl'],
+
+                    fdv: tempData['fdv'] == null && _doc['fdv'] && (_doc['fdv'] > 0) ? _doc['fdv'] : tempData['fdv'],
+
+                    holders: tempData['holders'] == null && _doc['holders'] && (_doc['holders'] > 0) ? _doc['holders'] : tempData['holders'],
+
+                    activeHolders: tempData['activeHolders'] == null && _doc['activeHolders'] && (_doc['activeHolders'] > 0) ? _doc['activeHolders'] : tempData['activeHolders'],
+
+                    totalSupply: tempData['totalSupply'] == null && _doc['totalSupply'] && (_doc['totalSupply'] > 0) ? _doc['totalSupply'] : tempData['totalSupply'],
+                    daily_fee: tempData['daily_fee'] == null && _doc['daily_fee'] && (_doc['daily_fee'] > 0) ? _doc['daily_fee'] : tempData['daily_fee'],
+
+                    price: tempData['price'] == null && _doc['price'] && (_doc['price'] > 0) ? _doc['price'] : tempData['price'],
+
+                    ttv: tempData['ttv'] == null && _doc['ttv'] && (_doc['ttv'] > 0) ? _doc['ttv'] : tempData['ttv'],
+
+                    circulatingSupply: tempData['circulatingSupply'] == null && _doc['circulatingSupply'] && (_doc['circulatingSupply'] > 0) ? _doc['circulatingSupply'] : tempData['circulatingSupply'],
+
+                    stakingRatio: tempData['stakingRatio'] == null && _doc['stakingRatio'] && (_doc['stakingRatio'] > 0) ? _doc['stakingRatio'] : tempData['stakingRatio'],
+
+                    marketCap: tempData['marketCap'] == null && _doc['marketCap'] && (_doc['marketCap'] > 0) ? _doc['marketCap'] : tempData['marketCap'],
+                };
+            }
+
+            data.push(tempData);
+        });
         res.send({ status: "success", data });
     }).catch(err => {
+        console.log(err);
         return next(new AppError('Internal Error', 400));
     }).finally(() => {
         if (data.length == 0) {
@@ -35,7 +85,7 @@ exports.homepage = catchAsync(async (req, res, next) => {
 function runAllFetch(chainNames) {
     let promises = [];
     for (let i = 0; i < chainNames.length; i++) {
-        promises.push(TokenData.find({ tokenName: chainNames[i] }).sort({ date: -1 }).limit(1));
+        promises.push(TokenData.find({ tokenName: chainNames[i] }).sort({ date: -1 }).limit(7));
     }
     return Promise.all(promises);
 }
