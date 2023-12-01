@@ -185,6 +185,23 @@ async function dailyHolderData(id ,address){
     }
 }
 
+async function backupTVL(CONFIG){
+  try {
+    const res = await axios.get(`https://api.llama.fi/tvl/${CONFIG.NAME}`);
+    console.log(res.data);
+    return res.data;
+  } catch (error) {
+    console.log(error);
+  }
+}
 
 
-module.exports = {dailyTTV , dailyTVLALL , getSupplyAndPrice , dailyFeeAndUser , dailyHolderData};
+
+module.exports = {
+  dailyTTV,
+  dailyTVLALL,
+  getSupplyAndPrice,
+  dailyFeeAndUser,
+  dailyHolderData,
+  backupTVL,
+};

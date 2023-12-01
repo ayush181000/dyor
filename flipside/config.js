@@ -8,6 +8,7 @@ const CONFIG = {
     CHAIN: "gnosis",
     CHAIN_ID: 1,
     CMC_ID: 1659,
+    TTSLUG: "gnosis-chain",
   },
   AVALANCHE: {
     NAME: "Avalanche",
@@ -18,6 +19,7 @@ const CONFIG = {
     CHAIN: "avalanche",
     CHAIN_ID: 1,
     CMC_ID: 5805,
+    TTSLUG: "avalanche",
   },
   FANTOM: {
     NAME: "Fantom",
@@ -28,6 +30,7 @@ const CONFIG = {
     CHAIN: "fantom",
     CHAIN_ID: 1,
     CMC_ID: 3513,
+    TTSLUG: "fantom",
   },
   SUSHI: {
     NAME: "SushiSwap",
@@ -38,6 +41,7 @@ const CONFIG = {
     CHAIN: "ethereum",
     CHAIN_ID: 1,
     CMC_ID: 6758,
+    TTSLUG: "sushiswap",
   },
   PANCAKE: {
     NAME: "PancakeSwap",
@@ -48,6 +52,7 @@ const CONFIG = {
     CHAIN: "ethereum",
     CHAIN_ID: 1,
     CMC_ID: 7186,
+    TTSLUG: "pancakeswap",
   },
   OSMOSIS: {
     NAME: "Osmosis",
@@ -58,6 +63,7 @@ const CONFIG = {
     CHAIN: "osmosis",
     CHAIN_ID: 1,
     CMC_ID: 12220,
+    TTSLUG: "osmosis",
   },
   OPTIMISM: {
     NAME: "Optimism",
@@ -68,6 +74,7 @@ const CONFIG = {
     CHAIN: "optimism",
     CHAIN_ID: 10,
     CMC_ID: 11840,
+    TTSLUG: "optimism",
   },
   ARBITRUM: {
     NAME: "Arbitrum",
@@ -78,6 +85,7 @@ const CONFIG = {
     CHAIN: "arbitrum",
     CHAIN_ID: 42161,
     CMC_ID: 11841,
+    TTSLUG: "arbitrum",
   },
   POLYGON: {
     NAME: "Polygon",
@@ -88,6 +96,7 @@ const CONFIG = {
     CHAIN: "polygon",
     CHAIN_ID: 137,
     CMC_ID: 3890,
+    TTSLUG: "polygon",
   },
   ETHEREUM: {
     NAME: "Ethereum",
@@ -98,6 +107,7 @@ const CONFIG = {
     CHAIN: "ethereum",
     CHAIN_ID: 1,
     CMC_ID: 1027,
+    TTSLUG: "ethereum",
   },
   LIDO: {
     NAME: "Lido",
@@ -108,6 +118,7 @@ const CONFIG = {
     CHAIN: "ethereum",
     CHAIN_ID: 1,
     CMC_ID: 8000,
+    TTSLUG: "lido-finance",
   },
   UNISWAP: {
     NAME: "Uniswap",
@@ -118,6 +129,7 @@ const CONFIG = {
     CHAIN: "ethereum",
     CHAIN_ID: 1,
     CMC_ID: 7083,
+    TTSLUG: "uniswap",
   },
   MAKER: {
     NAME: "Maker",
@@ -128,6 +140,7 @@ const CONFIG = {
     CHAIN: "ethereum",
     CHAIN_ID: 1,
     CMC_ID: 1518,
+    TTSLUG: "makerdao",
   },
   AAVE: {
     NAME: "Aave",
@@ -138,6 +151,7 @@ const CONFIG = {
     CHAIN: "ethereum",
     CHAIN_ID: 1,
     CMC_ID: 7278,
+    TTSLUG: "aave",
   },
   CURVE: {
     NAME: "curve-dex",
@@ -148,6 +162,7 @@ const CONFIG = {
     CHAIN: "ethereum",
     CHAIN_ID: 1,
     CMC_ID: 6538,
+    TTSLUG: "curve",
   },
   COMPOUND: {
     NAME: "Compound",
@@ -158,17 +173,9 @@ const CONFIG = {
     CHAIN: "ethereum",
     CHAIN_ID: 1,
     CMC_ID: 5692,
+    TTSLUG: "compound",
   },
-  // GRAVITY: {
-  //   NAME: "Gravivty-Finance",
-  //   IDENTIFIER: "PROTOCOL",
-  //   ADDRESS: "0x874e178A2f3f3F9d34db862453Cd756E7eAb0381",
-  //   DECIMAL: 18,
-  //   SYMBOL: "GFI",
-  //   CHAIN: "polygon",
-  //   CHAIN_ID: 137,
-  //   CMC_ID: 10324,
-  // },
+
   SYNTHETIX: {
     NAME: "Synthetix",
     IDENTIFIER: "PROTOCOL",
@@ -178,6 +185,7 @@ const CONFIG = {
     CHAIN: "ethereum",
     CHAIN_ID: 1,
     CMC_ID: 2586,
+    TTSLUG: "synthetix",
   },
   LIQUITY: {
     NAME: "Liquity",
@@ -188,6 +196,7 @@ const CONFIG = {
     CHAIN: "ethereum",
     CHAIN_ID: 1,
     CMC_ID: 7429,
+    TTSLUG: "liquity",
   },
   KYBER: {
     NAME: "Kyberswap-Elastic",
@@ -198,27 +207,8 @@ const CONFIG = {
     CHAIN: "ethereum",
     CHAIN_ID: 1,
     CMC_ID: 9444,
+    TTSLUG: "kyberswap",
   },
-  // BANCOR: {
-  //   NAME: "Bancor",
-  //   IDENTIFIER: "PROTOCOL",
-  //   ADDRESS: "0x1f573d6fb3f13d689ff844b4ce37794d79a7ff1c",
-  //   DECIMAL: 18,
-  //   SYMBOL: "BNT",
-  //   CHAIN: "ethereum",
-  //   CHAIN_ID: 1,
-  //   CMC_ID: 1727,
-  // },
-  // GRAPH: {
-  //   NAME: "The Graph",
-  //   IDENTIFIER: "PROTOCOL",
-  //   ADDRESS: "0xc944e90c64b2c07662a292be6244bdf05cda44a7",
-  //   DECIMAL: 18,
-  //   SYMBOL: "GRT",
-  //   CHAIN: "ethereum",
-  //   CHAIN_ID: 1,
-  //   CMC_ID: 6719,
-  // },
   CHAINLINK: {
     NAME: "Chainlink",
     IDENTIFIER: "PROTOCOL",
@@ -228,87 +218,8 @@ const CONFIG = {
     CHAIN: "ethereum",
     CHAIN_ID: 1,
     CMC_ID: 1975,
+    TTSLUG: "chainlink",
   },
-  // TRUFI: {
-  //   NAME: "TruFi",
-  //   IDENTIFIER: "PROTOCOL",
-  //   ADDRESS: "0x4c19596f5aaff459fa38b0f7ed92f11ae6543784",
-  //   DECIMAL: 18,
-  //   SYMBOL: "TRU",
-  //   CHAIN: "ethereum",
-  //   CHAIN_ID: 1,
-  //   CMC_ID: 7725,
-  // },
-  // CENTRIFUGE: {
-  //   NAME: "Centrifuge",
-  //   IDENTIFIER: "PROTOCOL",
-  //   ADDRESS: "0xc221b7e65ffc80de234bbb6667abdd46593d34f0",
-  //   DECIMAL: 18,
-  //   SYMBOL: "CFG",
-  //   CHAIN: "ethereum",
-  //   CHAIN_ID: 1,
-  //   CMC_ID: 6748,
-  // },
-  // ANKR: {
-  //   NAME: "Ankr",
-  //   IDENTIFIER: "PROTOCOL",
-  //   ADDRESS: "0x8290333cef9e6d528dd5618fb97a76f268f3edd4",
-  //   DECIMAL: 18,
-  //   SYMBOL: "ANKR",
-  //   CHAIN: "ethereum",
-  //   CHAIN_ID: 1,
-  //   CMC_ID: 3783,
-  // },
-  // LOOPRING: {
-  //   NAME: "Loopring",
-  //   IDENTIFIER: "PROTOCOL",
-  //   ADDRESS: "0xbbbbca6a901c926f240b89eacb641d8aec7aeafd",
-  //   DECIMAL: 18,
-  //   SYMBOL: "LRC",
-  //   CHAIN: "ethereum",
-  //   CHAIN_ID: 1,
-  //   CMC_ID: 1934,
-  // },
-  // RENDER: {
-  //   NAME: "Render",
-  //   IDENTIFIER: "PROTOCOL",
-  //   ADDRESS: "0x6de037ef9ad2725eb40118bb1702ebb27e4aeb24",
-  //   DECIMAL: 18,
-  //   SYMBOL: "RNDR",
-  //   CHAIN: "ethereum",
-  //   CHAIN_ID: 1,
-  //   CMC_ID: 5690,
-  // },
-  // ROCKET: {
-  //   NAME: "Rocket-Pool",
-  //   IDENTIFIER: "PROTOCOL",
-  //   ADDRESS: "0xd33526068d116ce69f19a9ee46f0bd304f21a51f",
-  //   DECIMAL: 18,
-  //   SYMBOL: "RPL",
-  //   CHAIN: "ethereum",
-  //   CHAIN_ID: 1,
-  //   CMC_ID: 2943,
-  // },
-  // FRAXSHARE: {
-  //   NAME: "Frax",
-  //   IDENTIFIER: "PROTOCOL",
-  //   ADDRESS: "0x3432b6a60d23ca0dfca7761b7ab56459d9c964d0",
-  //   DECIMAL: 18,
-  //   SYMBOL: "FXS",
-  //   CHAIN: "ethereum",
-  //   CHAIN_ID: 1,
-  //   CMC_ID: 6953,
-  // },
-  // ROLLBIT: {
-  //   NAME: "Rollbit",
-  //   IDENTIFIER: "PROTOCOL",
-  //   ADDRESS: "0x046eee2cc3188071c02bfc1745a6b17c656e3f3d",
-  //   DECIMAL: 18,
-  //   SYMBOL: "RLB",
-  //   CHAIN: "ethereum",
-  //   CHAIN_ID: 1,
-  //   CMC_ID: 15271,
-  // },
 };
 
 module.exports = CONFIG;
