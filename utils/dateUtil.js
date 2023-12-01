@@ -25,6 +25,7 @@ function getOlderDate(time) {
         case '90d': return new Date(otherDate.setDate(localDate.getDate() - 90));
         case '120d': return new Date(otherDate.setDate(localDate.getDate() - 120));
         case '365d': return new Date(otherDate.setDate(localDate.getDate() - 365));
+        case '395d': return new Date(otherDate.setDate(localDate.getDate() - 395));
         default:
         case 'latest': return localDate;
     }

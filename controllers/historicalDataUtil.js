@@ -107,21 +107,30 @@ const tokenTradingVolMetricFunc = async (tokenName) => {
 
 const feeMetricFunc = async (tokenName) => {
 
-    const { daily_fee: latestFee } = await TokenData.findOne({ tokenName, date: getLocalDate() }) || { daily_fee: null };
+    // * Fee
+    // * Token Trading Volume
 
-    const sum30days = await getFeeInDays(tokenName, '30d');
+    // 29oct - 29nov = 100 = latest
+    // 29 sept - 29 oct = 80 = 30D
+    // 29Sep - 29oct = 100 = 60D
 
-    const sum60days = await getFeeInDays(tokenName, '60d');
+    // const { daily_fee: latestFee } = await TokenData.findOne({ tokenName, date: getLocalDate() }) || { daily_fee: null };
 
-    const sum90days = await getFeeInDays(tokenName, '90d');
+    const latestFee = await getFeeInDays(tokenName, '30d');
 
-    const sum365days = await getFeeInDays(tokenName, '365d');
+    const sum30days = await getFeeInDaysDiff(tokenName, '60d', '30d');
 
-    const sumOf60daysAfter60days = await getFeeInDaysDiff(tokenName, '120d', '60d');
+    const sum60days = await getFeeInDaysDiff(tokenName, '90d', '60d');
 
-    const sumOf90daysAfter90days = await getFeeInDaysDiff(tokenName, '180d', '90d');
+    const sum90days = await getFeeInDaysDiff(tokenName, '120d', '90d');
 
-    const sumOf365daysAfter365days = await getFeeInDaysDiff(tokenName, '730d', '365d');
+    const sum365days = await getFeeInDaysDiff(tokenName, '395d', '365d');
+
+    // const sumOf60daysAfter60days = await getFeeInDaysDiff(tokenName, '120d', '60d');
+
+    // const sumOf90daysAfter90days = await getFeeInDaysDiff(tokenName, '180d', '90d');
+
+    // const sumOf365daysAfter365days = await getFeeInDaysDiff(tokenName, '730d', '365d');
 
     return {
         latestFee,
@@ -129,10 +138,10 @@ const feeMetricFunc = async (tokenName) => {
         sum60days,
         sum90days,
         sum365days,
-        percChange30d: percChange(sum30days, sum60days - sum30days),
-        percChange60d: percChange(sum60days, sumOf60daysAfter60days),
-        percChange90d: percChange(sum90days, sumOf90daysAfter90days),
-        percChange365d: percChange(sum365days, sumOf365daysAfter365days),
+        percChange30d: percChange(latestFee, sum30days),
+        percChange60d: percChange(latestFee, sum60days),
+        percChange90d: percChange(latestFee, sum90days),
+        percChange365d: percChange(latestFee, sum365days),
     }
 }
 

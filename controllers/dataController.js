@@ -6,7 +6,7 @@ const AppError = require('../utils/appError');
 const { getOlderDate } = require("../utils/dateUtil");
 const { historicalStaticData } = require("./historicalDataUtil");
 
-const tokenNames = ["Optimism", "Arbitrum", "Polygon", "Ethereum", "Lido", "Uniswap", "Maker", "Aave", "curve-dex", "Compound", "Gravivty-Finance", "Synthetix", "Liquity", "Kyberswap-Elastic", "Bancor", "The Graph", "Chainlink", "TruFi", "Centrifuge", "Ankr", "Loopring", "Render", "Rocket-Pool", "Frax", "Rollbit",
+const tokenNames = ["Optimism", "Arbitrum", "Polygon", "Ethereum", "Lido", "Uniswap", "Maker", "Aave", "curve-dex", "Compound", "Synthetix", "Liquity", "Kyberswap-Elastic", "Chainlink",
     // new chains added
     "Avalanche", "Fantom", "Gnosis", "Osmosis", "PancakeSwap"
 ];

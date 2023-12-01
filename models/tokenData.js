@@ -14,7 +14,7 @@ const tokenDataSchema = mongoose.Schema({
     daily_fee: Number,
 
     price: Number,
-    priceChangeP: String,
+    priceChangePercentages: String,
 
     ttv: Number,
     ttvChangePercentages: String,
@@ -28,7 +28,10 @@ const tokenDataSchema = mongoose.Schema({
     marketCap: Number
 });
 
-tokenDataSchema.index({ tokenName: 1, date: 1 }, { unique: true });
+tokenDataSchema.index(
+    { tokenName: 1, date: 1 },
+    { unique: true }
+);
 
 const TokenData = mongoose.model('tokenData', tokenDataSchema);
 
