@@ -61,6 +61,9 @@ async function dailyCron() {
               item.tvl == 0 ? console.log() : tvl = item.tvl;
             }
         }
+        if(tvl == 0){
+          tvl = await dailyData.backupTVL(CONFIG[TOKEN]);
+        }
 
         let price = 0;
         let circulatingSupply = 0;

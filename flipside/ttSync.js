@@ -22,7 +22,8 @@ mongoose
         //add await with cron script
        syncActive(value);
        syncHolder(value);
-       syncFee(value);   
+       syncFee(value); 
+       syncTVL(value);  
     }
   });
 
@@ -163,4 +164,49 @@ async function syncFee(value){
         console.log(error);
     }
 
+}
+
+async function syncTVL(value) {
+  try {
+    const name = value.NAME;
+
+    const ttData = await axios.get(
+      `https://api.tokenterminal.com/v2/internal/metrics/tvl?project_ids=${value.TTSLUG}&interval=7d`,
+      {
+        headers: {
+          Authorization: process.env.TT_BEARER,
+        },
+      }
+    );
+
+    console.log("fetched tvl for " + name);
+
+    ttData.data.data.forEach(async (el) => {
+      const date = getLocalDate(el.timestamp);
+
+      const newObject = {
+        date: new Date(date),
+
+        tvl: el.value,
+      };
+
+      // console.log("new object");
+      // console.log(newObject);
+
+      // const oldMongoEntry = await TokenData.findOne({ tokenName: name, date }) || {};
+
+      const updatedMongoEntry = await TokenData.findOneAndUpdate(
+        { tokenName: name, date: new Date(date) },
+        { ...newObject },
+        { new: true, upsert: true }
+      );
+
+      // console.log("updated mongo entry ");
+      // console.log(updatedMongoEntry);
+    });
+    console.log("finished updating tvl " + name);
+    await delay(5000);
+  } catch (error) {
+    console.log(error);
+  }
 }
