@@ -4,28 +4,40 @@ const axios = require("axios");
 const mongoose = require("mongoose");
 const TokenData = require("../models/tokenData");
 const { getLocalDate } = require("../utils/dateUtil");
+const { CronJob } = require("cron");
 
 const delay = (ms) => new Promise((res) => setTimeout(res, ms));
 
-//put this in async function
 
-mongoose
-  .connect( process.env.DATABASE,
-    {
+const job = new CronJob(
+  "0 14 * * *", // cronTime
+  TT, // onTick
+  function () {
+    console.log("TT SYNC COMPLETED");
+  }, // onComplete
+  true, // start
+  "Asia/Kolkata" // timeZone
+);
+
+async function TT(){
+  mongoose
+    .connect(process.env.DATABASE, {
       useNewUrlParser: true,
-    }
-  )
-  .then(() => {
-    console.log("connected to db");
+    })
+    .then(() => {
+      console.log("connected to db");
 
-    for (const [key, value] of Object.entries(CONFIG)) {
+      for (const [key, value] of Object.entries(CONFIG)) {
         //add await with cron script
-       syncActive(value);
-       syncHolder(value);
-       syncFee(value); 
-       syncTVL(value);  
-    }
-  });
+        await syncActive(value);
+        await syncHolder(value);
+        await syncFee(value);
+        await syncTVL(value);
+      }
+    });
+
+}
+
 
 async function syncActive(value){
     try {
