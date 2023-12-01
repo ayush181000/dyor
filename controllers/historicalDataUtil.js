@@ -7,7 +7,6 @@ const historicalStaticData = (async (tokenName) => {
     const { price: latestPrice, circulatingSupply: latestCirculatingSupply, tvl: latestTvl, holders: latestHolders } = await TokenData.findOne({ tokenName, date: getLocalDate() }) || nullObject;
     const { price: price24h, circulatingSupply: circulatingSupply24h, tvl: tvl24h, holders: holders24h } = await TokenData.findOne({ tokenName, date: getOlderDate('24h') }) || nullObject;
     const { price: price30d, circulatingSupply: circulatingSupply30d, tvl: tvl30d, holders: holders30d } = await TokenData.findOne({ tokenName, date: getOlderDate('30d') }) || nullObject;
-    console.log(await TokenData.findOne({ tokenName, date: getOlderDate('30d') }))
     const { price: price60d, circulatingSupply: circulatingSupply60d, tvl: tvl60d, holders: holders60d } = await TokenData.findOne({ tokenName, date: getOlderDate('60d') }) || nullObject;
     const { price: price90d, circulatingSupply: circulatingSupply90d, tvl: tvl90d, holders: holders90d } = await TokenData.findOne({ tokenName, date: getOlderDate('90d') }) || nullObject;
     const { price: price365d, circulatingSupply: circulatingSupply365d, tvl: tvl365d, holders: holders365d } = await TokenData.findOne({ tokenName, date: getOlderDate('365d') }) || nullObject;
@@ -76,21 +75,15 @@ const historicalStaticData = (async (tokenName) => {
 });
 
 const tokenTradingVolMetricFunc = async (tokenName) => {
-    const { ttv: latestTtv } = await TokenData.findOne({ tokenName, date: getLocalDate() }) || { ttv: null };
+    const latestTtv = await getTTVinDays(tokenName, '30d');
 
-    const sum30days = await getTTVinDays(tokenName, '30d');
+    const sum30days = await getTTVinDaysDiff(tokenName, '60d', '30d');
 
-    const sum60days = await getTTVinDays(tokenName, '60d');
+    const sum60days = await getTTVinDaysDiff(tokenName, '90d', '60d');
 
-    const sum90days = await getTTVinDays(tokenName, '90d');
+    const sum90days = await getTTVinDaysDiff(tokenName, '120d', '90d');
 
-    const sum365days = await getTTVinDays(tokenName, '365d');
-
-    const sumOf60daysAfter60days = await getTTVinDaysDiff(tokenName, '120d', '60d');
-
-    const sumOf90daysAfter90days = await getTTVinDaysDiff(tokenName, '180d', '90d');
-
-    const sumOf365daysAfter365days = await getTTVinDaysDiff(tokenName, '730d', '365d');
+    const sum365days = await getTTVinDaysDiff(tokenName, '395d', '365d');
 
     return {
         latestTtv,
@@ -98,24 +91,14 @@ const tokenTradingVolMetricFunc = async (tokenName) => {
         sum60days,
         sum90days,
         sum365days,
-        percChange30d: percChange(sum30days, sum60days - sum30days),
-        percChange60d: percChange(sum60days, sumOf60daysAfter60days),
-        percChange90d: percChange(sum90days, sumOf90daysAfter90days),
-        percChange365d: percChange(sum365days, sumOf365daysAfter365days),
+        percChange30d: percChange(latestTtv, sum30days),
+        percChange60d: percChange(latestTtv, sum60days),
+        percChange90d: percChange(latestTtv, sum90days),
+        percChange365d: percChange(latestTtv, sum365days),
     }
 };
 
 const feeMetricFunc = async (tokenName) => {
-
-    // * Fee
-    // * Token Trading Volume
-
-    // 29oct - 29nov = 100 = latest
-    // 29 sept - 29 oct = 80 = 30D
-    // 29Sep - 29oct = 100 = 60D
-
-    // const { daily_fee: latestFee } = await TokenData.findOne({ tokenName, date: getLocalDate() }) || { daily_fee: null };
-
     const latestFee = await getFeeInDays(tokenName, '30d');
 
     const sum30days = await getFeeInDaysDiff(tokenName, '60d', '30d');
@@ -125,12 +108,6 @@ const feeMetricFunc = async (tokenName) => {
     const sum90days = await getFeeInDaysDiff(tokenName, '120d', '90d');
 
     const sum365days = await getFeeInDaysDiff(tokenName, '395d', '365d');
-
-    // const sumOf60daysAfter60days = await getFeeInDaysDiff(tokenName, '120d', '60d');
-
-    // const sumOf90daysAfter90days = await getFeeInDaysDiff(tokenName, '180d', '90d');
-
-    // const sumOf365daysAfter365days = await getFeeInDaysDiff(tokenName, '730d', '365d');
 
     return {
         latestFee,
@@ -227,8 +204,8 @@ const getFeeInDaysDiff = (async (tokenName, startDate, endDate) => {
             }
         }
     ]).then((arr) => {
-        // console.log(arr)
-        return arr[0]?.daily_fee || 0;
+        console.log(arr)
+        return arr[0]?.total_fee || 0;
     });
 })
 
