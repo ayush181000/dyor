@@ -22,12 +22,12 @@ const job = new CronJob(
 async function dailyCron() {
     // Database connection
     mongoose
-      .connect(process.env.DATABASE, {
-        useNewUrlParser: true,
-      })
-      .then(() => {
-        console.log("DB connection successful");
-      });
+        .connect(process.env.DATABASE, {
+            useNewUrlParser: true,
+        })
+        .then(() => {
+            console.log("DB connection successful");
+        });
     const date = getLocalDate();
 
 
@@ -94,7 +94,7 @@ async function dailyCron() {
             holders: holders === 'NA' ? null : holders,
             circulatingSupply: circulatingSupply === 'NA' ? null : circulatingSupply,
             totalSupply: totalSupply === 'NA' ? null : totalSupply,
-            active_users: feeAndUserData.active_users === 'NA' ? null : feeAndUserData.active_users,
+            activeHolders: feeAndUserData.active_users === 'NA' ? null : feeAndUserData.active_users,
             daily_fee: feeAndUserData.daily_fee === 'NA' ? null : feeAndUserData.daily_fee,
         });
 
@@ -108,7 +108,7 @@ async function dailyCron() {
             ttv: volume,
             fdv: fdv,
             holders: holders,
-            active_users: feeAndUserData.active_users,
+            activeHolders: feeAndUserData.active_users,
             daily_fee: feeAndUserData.daily_fee,
         };
 
