@@ -4,7 +4,7 @@ const { getLocalDate, getOlderDate } = require("../utils/dateUtil");
 const historicalStaticData = (async (tokenName) => {
     const nullObject = { price: null, circulatingSupply: null, tvl: null, holders: null, activeHolders: null };
 
-    const { price: latestPrice, circulatingSupply: latestCirculatingSupply, tvl: latestTvl, holders: latestHolders, activeHolders: latestActiveHolders } = await TokenData.findOne({ tokenName, date: getLocalDate() }) || nullObject;
+    const { price: latestPrice, circulatingSupply: latestCirculatingSupply, tvl: latestTvl, holders: latestHolders, activeHolders: latestActiveHolders } = await TokenData.findOne({ tokenName, date: getLocalDate(true) }) || nullObject;
     const { price: price24h, circulatingSupply: circulatingSupply24h, tvl: tvl24h, holders: holders24h, activeHolders: activeHolders24h } = await TokenData.findOne({ tokenName, date: getOlderDate('24h') }) || nullObject;
     const { price: price30d, circulatingSupply: circulatingSupply30d, tvl: tvl30d, holders: holders30d, activeHolders: activeHolders30d } = await TokenData.findOne({ tokenName, date: getOlderDate('30d') }) || nullObject;
     const { price: price60d, circulatingSupply: circulatingSupply60d, tvl: tvl60d, holders: holders60d, activeHolders: activeHolders60d } = await TokenData.findOne({ tokenName, date: getOlderDate('60d') }) || nullObject;
@@ -13,9 +13,17 @@ const historicalStaticData = (async (tokenName) => {
 
     const tokenTradingVolumeMetric = await tokenTradingVolMetricFunc(tokenName);
     const feeMetric = await feeMetricFunc(tokenName);
-    // console.log("imp", latestPrice, price30d, percChange(latestPrice, price30d))
+    const fair_price = fairPriceCalculation(
+        percChange(latestTvl, tvl30d),
+        tokenTradingVolumeMetric.percChange30d,
+        feeMetric.percChange30d,
+        percChange(latestActiveHolders, activeHolders30d),
+        percChange(latestCirculatingSupply, circulatingSupply30d),
+        latestPrice
+    );
 
     return {
+        fair_price,
         priceMetric: {
             latestPrice,
             price24h,
@@ -83,8 +91,7 @@ const historicalStaticData = (async (tokenName) => {
         },
 
         tokenTradingVolumeMetric,
-        feeMetric
-
+        feeMetric,
     }
 });
 
@@ -173,15 +180,19 @@ const getTTVinDaysDiff = (async (tokenName, startDate, endDate) => {
             }
         }
     ]).then((arr) => {
-        // console.log(arr)
         return arr[0]?.total_ttv || 0
     });
 })
 
 const getFeeInDays = (async (tokenName, days) => {
-    // console.log(days, getOlderDate(days));
     return await TokenData.aggregate([
-        { $match: { tokenName, date: { $gte: getOlderDate(days) } } },
+        {
+            $match:
+            {
+                tokenName,
+                date: { $gte: getOlderDate(days) }
+            }
+        },
         {
             $group: {
                 _id: "$tokenName",
@@ -218,13 +229,21 @@ const getFeeInDaysDiff = (async (tokenName, startDate, endDate) => {
             }
         }
     ]).then((arr) => {
-        console.log(arr)
         return arr[0]?.total_fee || 0;
     });
 })
 
+const fairPriceCalculation = (tvl, ttv, fee, dau, circulatingSupply, price) => {
+    console.log(tvl, ttv, fee, dau)
+    const average_demand_change_perc = (tvl + ttv + fee + dau) / 4;
+    const average_supply_change_perc = circulatingSupply;
+
+    const fair_price_percentage = average_demand_change_perc - average_supply_change_perc;
+
+    return price + (price * fair_price_percentage / 100);
+}
+
 const percChange = (a, b) => {
-    // console.log(a, b);
     if (a == null) a = 0;
     if (b == 0 || b == null) {
         // infinity case
