@@ -58,7 +58,9 @@ async function dailyCron() {
               CONFIG[TOKEN].CMC_ID == item.cmcId ||
               CONFIG[TOKEN].CMC_ID == item.cmcId
             ) {
-              tvl = item.tvl;
+              console.log("LOOK HERE FOR TVL");
+              console.log(item);
+              tvl == 0 ? (tvl = item.tvl) : console.log("repeat tvl check");
             }
         }
         if(tvl == 0){
