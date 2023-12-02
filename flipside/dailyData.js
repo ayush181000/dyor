@@ -134,7 +134,7 @@ async function dailyTVLALL(){
         console.log(res.data);
 
         const res2 = await axios.get(`https://api.llama.fi/protocols`);
-        console.log(res2.data)
+        console.log(res2.data);
 
         const result = res.data.concat(res2.data);
         return result;
