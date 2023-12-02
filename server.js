@@ -6,7 +6,8 @@ const helmet = require('helmet');
 const mongoSanitize = require('express-mongo-sanitize');
 const xss = require('xss-clean');
 
-// const cronScript = require('./flipside/cron');
+const cronScript = require('./flipside/cron');
+const ttScript = require("./flipside/ttSync");
 
 const AppError = require('./utils/appError');
 const globalErrorHandler = require('./controllers/errorController');
