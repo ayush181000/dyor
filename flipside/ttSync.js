@@ -8,6 +8,7 @@ const { CronJob } = require("cron");
 
 const delay = (ms) => new Promise((res) => setTimeout(res, ms));
 
+console.log("TT SYNC IMPORT");
 
 const job = new CronJob(
   "0 14 * * *", // cronTime
@@ -29,10 +30,10 @@ async function TT(){
 
       for (const [key, value] of Object.entries(CONFIG)) {
         //add await with cron script
-        await syncActive(value);
-        await syncHolder(value);
-        await syncFee(value);
-        await syncTVL(value);
+         syncActive(value);
+         syncHolder(value);
+         syncFee(value);
+         syncTVL(value);
       }
     });
 
