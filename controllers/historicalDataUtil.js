@@ -1,5 +1,6 @@
 const TokenData = require("../models/tokenData");
 const { getLocalDate, getOlderDate } = require("../utils/dateUtil");
+const percChange = require('../utils/percentageChange');
 
 const historicalStaticData = (async (tokenName) => {
     const nullObject = { price: null, circulatingSupply: null, tvl: null, holders: null, activeHolders: null };
@@ -234,22 +235,13 @@ const getFeeInDaysDiff = (async (tokenName, startDate, endDate) => {
 })
 
 const fairPriceCalculation = (tvl, ttv, fee, dau, circulatingSupply, price) => {
-    console.log(tvl, ttv, fee, dau)
+    // console.log(tvl, ttv, fee, dau)
     const average_demand_change_perc = (tvl + ttv + fee + dau) / 4;
     const average_supply_change_perc = circulatingSupply;
 
     const fair_price_percentage = average_demand_change_perc - average_supply_change_perc;
 
     return price + (price * fair_price_percentage / 100);
-}
-
-const percChange = (a, b) => {
-    if (a == null) a = 0;
-    if (b == 0 || b == null) {
-        // infinity case
-        return '∞';
-    }
-    return (a - b) / b * 100;
 }
 
 module.exports = { historicalStaticData }
