@@ -15,6 +15,23 @@ function getLocalDate(conditional = false) {
     return currentDateInIndia;
 }
 
+function getCorrectedDate(date) {
+  // Create a new Date object for the current date and time
+  const currentDate = new Date(date);
+  currentDate.setHours(0, 0, 0, 0);
+
+  const timeZoneOffsetInMinutes = -new Date().getTimezoneOffset();
+  // console.log(currentDate)
+  // console.log(timeZoneOffsetInMinutes)
+
+  // Adjust the current date and time based on the time zone offset
+  const currentDateInIndia = new Date(
+    currentDate.getTime() + timeZoneOffsetInMinutes * 60000
+  );
+
+  return currentDateInIndia;
+}
+
 function getOlderDate(time) {
     const localDate = getLocalDate();
     const otherDate = getLocalDate();
@@ -33,4 +50,4 @@ function getOlderDate(time) {
     }
 }
 
-module.exports = { getLocalDate, getOlderDate };
+module.exports = { getLocalDate, getOlderDate, getCorrectedDate };

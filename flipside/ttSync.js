@@ -3,7 +3,7 @@ const CONFIG = require("./config");
 const axios = require("axios");
 const mongoose = require("mongoose");
 const TokenData = require("../models/tokenData");
-const { getLocalDate } = require("../utils/dateUtil");
+const { getCorrectedDate } = require("../utils/dateUtil");
 const { CronJob } = require("cron");
 
 const delay = (ms) => new Promise((res) => setTimeout(res, ms));
@@ -56,7 +56,7 @@ async function syncActive(value){
         console.log("fetched active user data for " + name);
 
         ttData.data.data.forEach(async (el) => {
-          const date = getLocalDate(el.timestamp);
+          const date = getCorrectedDate(el.timestamp);
 
           const newObject = {
             date: new Date(date),
@@ -103,7 +103,7 @@ async function syncHolder(value) {
     console.log("fetched holder data for " + name);
 
     ttData.data.data.forEach(async (el) => {
-      const date = getLocalDate(el.timestamp);
+      const date = getCorrectedDate(el.timestamp);
 
       const newObject = {
         date: new Date(date),
@@ -136,7 +136,7 @@ async function syncFee(value){
         const name = value.NAME;
 
         const ttData = await axios.get(
-          `https://api.tokenterminal.com/v2/internal/metrics/fees?project_ids=${value.TTSLUG}&interval=7d`,
+          `https://api.tokenterminal.com/v2/internal/metrics/fees?project_ids=${value.TTSLUG}&interval=365d`,
           {
             headers: {
               Authorization: process.env.TT_BEARER,
@@ -147,7 +147,7 @@ async function syncFee(value){
         console.log("fetched fee for " + name);
 
         ttData.data.data.forEach(async (el) => {
-          const date = getLocalDate(el.timestamp);
+          const date = getCorrectedDate(el.timestamp);
 
           const newObject = {
             date: new Date(date),
@@ -167,7 +167,7 @@ async function syncFee(value){
           );
 
           // console.log("updated mongo entry ");
-          // console.log(updatedMongoEntry);
+          console.log(updatedMongoEntry);
         });
         console.log("finished updating fee " + name);
         await delay(5000);
@@ -195,7 +195,7 @@ async function syncTVL(value) {
     console.log("fetched tvl for " + name);
 
     ttData.data.data.forEach(async (el) => {
-      const date = getLocalDate(el.timestamp);
+      const date = getCorrectedDate(el.timestamp);
 
       const newObject = {
         date: new Date(date),
