@@ -75,25 +75,6 @@ exports.homepage = catchAsync(async (req, res, next) => {
     res.send({ status: "success", data });
 })
 
-
-
-exports.dashboard = catchAsync(async (req, res, next) => {
-    if (!req.query.tokenName) {
-        return next(new AppError('No token name provided', 400));
-    }
-
-    let tokenName = req.query.tokenName;
-    console.log(tokenName)
-
-
-    const priceMetric = await historicalStaticData(tokenName);
-    // const ttvMetric = await tokenTradingVolMetric(tokenName);
-
-
-
-    res.send({ status: "success", tokenName, ...priceMetric });
-})
-
 const returnPipeline = (tokenName) => {
     return [
         {
@@ -117,65 +98,30 @@ const returnPipeline = (tokenName) => {
     ]
 }
 
-const getPrice = async (time, chainNames) => {
-    // time = enum [latest , 24h , 30d , 90d , 365d]
-    pipeline = [
-        {
-            $match: {
-                tokenName: { $in: chainNames },
-                date: new Date(getOlderDate(time))
-            }
-        },
-        { $project: { price: 1, date: 1, tokenName: 1 } }
-    ];
+exports.dashboard = catchAsync(async (req, res, next) => {
+    if (!req.query.tokenName) return next(new AppError('No token name provided', 400));
 
-    return await TokenData.aggregate(pipeline);
-}
+    let tokenName = req.query.tokenName;
+    console.log(tokenName)
 
-const getPriceChange = async (time = '24h', chainNames) => {
-    // time = enum [24h , 30d , 90d , 365d] default = 24h
+    const historicalMetric = await historicalStaticData(tokenName);
 
-    let pipeline = [{ $match: { tokenName: { $in: chainNames } } }];
+    res.send({ status: "success", tokenName, ...historicalMetric });
+})
 
-    const olderDate = new Date(getOlderDate(time));
+exports.charts = catchAsync(async (req, res, next) => {
+    if (!req.query.tokenName) return next(new AppError('No token name provided', 400));
 
-    pipeline.push(...[
-        { $match: { date: { $gt: olderDate } } },
-        { $sort: { date: -1 } },
-        {
-            $group: {
-                _id: '$tokenName',
-                latestPrice: { $first: '$price' },
-                previousPrice: { $last: '$price' }
-            }
-        },
-        {
-            $project: {
-                tokenName: '$_id',
-                percentageChange: {
-                    $subtract: [
-                        {
-                            $divide: [
-                                {
-                                    $subtract: [
-                                        '$latestPrice',
-                                        '$previousPrice'
-                                    ]
-                                },
-                                '$previousPrice'
-                            ]
-                        },
-                        1
-                    ]
-                },
-                _id: 0
-            }
-        }
-    ]);
+    let tokenName = req.query.tokenName;
+    console.log(tokenName)
 
-    // console.log(pipeline);
+    const chart = await TokenData.find({ tokenName }).sort({ date: -1 }).limit(365).select({
+        tvl: 1,
+        ttv: 1,
+        activeHolders: 1,
+        date: 1
+    });
 
-
-    return { time, data: await TokenData.aggregate(pipeline) };
-}
+    res.send({ status: "success", tokenName, chart });
+})
 
