@@ -1,4 +1,5 @@
-function getLocalDate(conditional = false) {
+// use this to remove 12 hours from time to sync with our script as it starts at 12 pm
+function getLocalDate() {
     // Create a new Date object for the current date and time
     const currentDate = new Date();
 
@@ -15,21 +16,24 @@ function getLocalDate(conditional = false) {
     return currentDateInIndia;
 }
 
+// use this for data pulling
 function getCorrectedDate(date) {
-  // Create a new Date object for the current date and time
-  const currentDate = new Date(date);
-  currentDate.setHours(0, 0, 0, 0);
+    // Create a new Date object for the current date and time
+    const currentDate = new Date(date);
 
-  const timeZoneOffsetInMinutes = -new Date().getTimezoneOffset();
-  // console.log(currentDate)
-  // console.log(timeZoneOffsetInMinutes)
+    currentDate.setHours(currentDate.getHours() - 12);
+    currentDate.setHours(0, 0, 0, 0);
 
-  // Adjust the current date and time based on the time zone offset
-  const currentDateInIndia = new Date(
-    currentDate.getTime() + timeZoneOffsetInMinutes * 60000
-  );
+    const timeZoneOffsetInMinutes = -new Date().getTimezoneOffset();
+    // console.log(currentDate)
+    // console.log(timeZoneOffsetInMinutes)
 
-  return currentDateInIndia;
+    // Adjust the current date and time based on the time zone offset
+    const currentDateInIndia = new Date(
+        currentDate.getTime() + timeZoneOffsetInMinutes * 60000
+    );
+
+    return currentDateInIndia;
 }
 
 function getOlderDate(time) {
