@@ -136,7 +136,7 @@ async function syncFee(value){
         const name = value.NAME;
 
         const ttData = await axios.get(
-          `https://api.tokenterminal.com/v2/internal/metrics/fees?project_ids=${value.TTSLUG}&interval=365d`,
+          `https://api.tokenterminal.com/v2/internal/metrics/fees?project_ids=${value.TTSLUG}&interval=7d`,
           {
             headers: {
               Authorization: process.env.TT_BEARER,
