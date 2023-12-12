@@ -83,8 +83,11 @@ async function dailyCron() {
             mcap = cmcData.quote.USD.market_cap;
             volume = cmcData.quote.USD.volume_24h;
         }
+        let holders = 0;
+        if(CONFIG[TOKEN].IDENTIFIER == "PROTOCOL")
+            holders = await dailyData.dailyHolderData(CONFIG[TOKEN].CHAIN_ID, CONFIG[TOKEN].ADDRESS);
 
-        const holders = await dailyData.dailyHolderData(CONFIG[TOKEN].CHAIN_ID, CONFIG[TOKEN].ADDRESS);
+
         //write staking ratio code foe avl lines
         const writtenData = await TokenData.create({
             tokenName: CONFIG[TOKEN].NAME,
