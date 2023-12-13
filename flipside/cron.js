@@ -9,13 +9,13 @@ const TokenData = require('../models/tokenData');
 console.log('Cron script executed')
 
 const job = new CronJob(
-    '0 12 * * *', // cronTime
-    dailyCron, // onTick
-    function () {
-        console.log("Cron Job Succesfull")
-    }, // onComplete
-    true, // start
-    'Asia/Kolkata' // timeZone
+  "0 * * * *", // cronTime
+  dailyCron, // onTick
+  function () {
+    console.log("Cron Job Succesfull");
+  }, // onComplete
+  true, // start
+  "Asia/Kolkata" // timeZone
 );
 
 
