@@ -8,16 +8,22 @@ const { historicalStaticData } = require("./historicalDataUtil");
 
 const tokenNames = ["Optimism", "Arbitrum", "Polygon", "Ethereum", "Lido", "Uniswap", "Maker", "Aave", "curve-dex", "Compound", "Synthetix", "Liquity", "Kyberswap-Elastic", "Chainlink", "Avalanche", "Fantom", "Gnosis", "Osmosis", "PancakeSwap"];
 
-exports.homepage = catchAsync(async (req, res, next) => {
+const homepage = catchAsync(async (req, res, next) => {
     let chainNames = tokenNames;
     // let chainNames = ["Chainlink"];
-    let data = [];
 
     if (req.query.tokenName) {
         chainNames = req.query.tokenName.split(",");
         console.log(chainNames);
     }
 
+    const data = await dataFallback(chainNames);
+
+    res.send({ status: "success", data });
+})
+
+const dataFallback = async (chainNames) => {
+    let data = [];
     for (let chain of chainNames) {
         const abc = await TokenData.aggregate(returnPipeline(chain));
 
@@ -72,8 +78,8 @@ exports.homepage = catchAsync(async (req, res, next) => {
         data.push(tempData);
     }
 
-    res.send({ status: "success", data });
-})
+    return data;
+}
 
 const returnPipeline = (tokenName) => {
     return [
@@ -98,7 +104,7 @@ const returnPipeline = (tokenName) => {
     ]
 }
 
-exports.dashboard = catchAsync(async (req, res, next) => {
+const dashboard = catchAsync(async (req, res, next) => {
     if (!req.query.tokenName) return next(new AppError('No token name provided', 400));
 
     let tokenName = req.query.tokenName;
@@ -109,7 +115,7 @@ exports.dashboard = catchAsync(async (req, res, next) => {
     res.send({ status: "success", tokenName, ...historicalMetric });
 })
 
-exports.charts = catchAsync(async (req, res, next) => {
+const charts = catchAsync(async (req, res, next) => {
     if (!req.query.tokenName) return next(new AppError('No token name provided', 400));
 
     let tokenName = req.query.tokenName;
@@ -125,3 +131,4 @@ exports.charts = catchAsync(async (req, res, next) => {
     res.send({ status: "success", tokenName, chart });
 })
 
+module.exports = { dataFallback, charts, dashboard, homepage }

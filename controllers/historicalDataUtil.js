@@ -5,7 +5,14 @@ const percChange = require('../utils/percentageChange');
 const historicalStaticData = (async (tokenName) => {
     const nullObject = { price: null, circulatingSupply: null, tvl: null, holders: null, activeHolders: null };
 
-    const { price: latestPrice, circulatingSupply: latestCirculatingSupply, tvl: latestTvl, holders: latestHolders, activeHolders: latestActiveHolders } = await TokenData.findOne({ tokenName, date: getLocalDate(true) }) || nullObject;
+    const latestData = await dataFallback([tokenName]);
+
+    const latestPrice = latestData[0]?.price || null;
+    const latestCirculatingSupply = latestData[0]?.circulatingSupply || null;
+    const latestTvl = latestData[0]?.tvl || null;
+    const latestHolders = latestData[0]?.holders || null;
+    const latestActiveHolders = latestData[0]?.activeHolders || null;
+
     const { price: price24h, circulatingSupply: circulatingSupply24h, tvl: tvl24h, holders: holders24h, activeHolders: activeHolders24h } = await TokenData.findOne({ tokenName, date: getOlderDate('24h') }) || nullObject;
     const { price: price30d, circulatingSupply: circulatingSupply30d, tvl: tvl30d, holders: holders30d, activeHolders: activeHolders30d } = await TokenData.findOne({ tokenName, date: getOlderDate('30d') }) || nullObject;
     const { price: price60d, circulatingSupply: circulatingSupply60d, tvl: tvl60d, holders: holders60d, activeHolders: activeHolders60d } = await TokenData.findOne({ tokenName, date: getOlderDate('60d') }) || nullObject;
@@ -242,6 +249,88 @@ const fairPriceCalculation = (tvl, ttv, fee, dau, circulatingSupply, price) => {
     const fair_price_percentage = average_demand_change_perc - average_supply_change_perc;
 
     return price + (price * fair_price_percentage / 100);
+}
+
+const dataFallback = async (chainNames) => {
+    let data = [];
+    for (let chain of chainNames) {
+        const abc = await TokenData.aggregate(returnPipeline(chain));
+
+        let tempData = {
+            tvl: abc[0].total_tvl,
+            daily_fee: abc[0].total_fee,
+            fdv: null,
+            holders: null,
+            activeHolders: null,
+            totalSupply: null,
+            price: null,
+            ttv: null,
+            circulatingSupply: null,
+            stakingRatio: null,
+            marketCap: null
+        };
+
+        const result = await TokenData.find({ tokenName: chain }).sort({ date: -1 }).limit(7);
+        // console.log(result);
+
+        // console.log(result.length);
+        for (let i = 0; i < result.length; i++) {
+            const { _doc } = result[i];
+
+            tempData = {
+                tokenName: _doc['tokenName'],
+                date: tempData['date'] || _doc['date'],
+
+                tvl: tempData['tvl'] == null && _doc['tvl'] && (_doc['tvl'] > 0) ? _doc['tvl'] : tempData['tvl'],
+
+                fdv: tempData['fdv'] == null && _doc['fdv'] && (_doc['fdv'] > 0) ? _doc['fdv'] : tempData['fdv'],
+
+                holders: tempData['holders'] == null && _doc['holders'] && (_doc['holders'] > 0) ? _doc['holders'] : tempData['holders'],
+
+                activeHolders: tempData['activeHolders'] == null && _doc['activeHolders'] && (_doc['activeHolders'] > 0) ? _doc['activeHolders'] : tempData['activeHolders'],
+
+                totalSupply: tempData['totalSupply'] == null && _doc['totalSupply'] && (_doc['totalSupply'] > 0) ? _doc['totalSupply'] : tempData['totalSupply'],
+                daily_fee: tempData['daily_fee'] == null && _doc['daily_fee'] && (_doc['daily_fee'] > 0) ? _doc['daily_fee'] : tempData['daily_fee'],
+
+                price: tempData['price'] == null && _doc['price'] && (_doc['price'] > 0) ? _doc['price'] : tempData['price'],
+
+                ttv: tempData['ttv'] == null && _doc['ttv'] && (_doc['ttv'] > 0) ? _doc['ttv'] : tempData['ttv'],
+
+                circulatingSupply: tempData['circulatingSupply'] == null && _doc['circulatingSupply'] && (_doc['circulatingSupply'] > 0) ? _doc['circulatingSupply'] : tempData['circulatingSupply'],
+
+                stakingRatio: tempData['stakingRatio'] == null && _doc['stakingRatio'] && (_doc['stakingRatio'] > 0) ? _doc['stakingRatio'] : tempData['stakingRatio'],
+
+                marketCap: tempData['marketCap'] == null && _doc['marketCap'] && (_doc['marketCap'] > 0) ? _doc['marketCap'] : tempData['marketCap'],
+            };
+        }
+
+        data.push(tempData);
+    }
+
+    return data;
+}
+
+const returnPipeline = (tokenName) => {
+    return [
+        {
+            '$match': {
+                'tokenName': tokenName,
+                'date': {
+                    '$gte': getOlderDate('30d')
+                }
+            }
+        }, {
+            '$group': {
+                '_id': '$tokenName',
+                'total_tvl': {
+                    '$sum': '$tvl'
+                },
+                'total_fee': {
+                    '$sum': '$daily_fee'
+                }
+            }
+        }
+    ]
 }
 
 module.exports = { historicalStaticData }
