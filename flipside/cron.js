@@ -89,19 +89,30 @@ async function dailyCron() {
 
 
         //write staking ratio code foe avl lines
-        const writtenData = await TokenData.create({
+        const writtenData = await TokenData.findOneAndUpdate(
+          { tokenName: CONFIG[TOKEN].NAME, date: date },
+          {
             tokenName: CONFIG[TOKEN].NAME,
             date: date,
-            price: price === 'NA' ? null : price,
-            tvl: tvl === 'NA' ? null : tvl,
-            ttv: volume === 'NA' ? null : volume,
-            fdv: fdv === 'NA' ? null : fdv,
-            holders: holders === 'NA' ? null : holders,
-            circulatingSupply: circulatingSupply === 'NA' ? null : circulatingSupply,
-            totalSupply: totalSupply === 'NA' ? null : totalSupply,
-            activeHolders: feeAndUserData.active_users === 'NA' ? null : feeAndUserData.active_users,
-            daily_fee: feeAndUserData.daily_fee === 'NA' ? null : feeAndUserData.daily_fee,
-        });
+            price: price === "NA" ? null : price,
+            tvl: tvl === "NA" ? null : tvl,
+            ttv: volume === "NA" ? null : volume,
+            fdv: fdv === "NA" ? null : fdv,
+            holders: holders === "NA" ? null : holders,
+            circulatingSupply:
+              circulatingSupply === "NA" ? null : circulatingSupply,
+            totalSupply: totalSupply === "NA" ? null : totalSupply,
+            activeHolders:
+              feeAndUserData.active_users === "NA"
+                ? null
+                : feeAndUserData.active_users,
+            daily_fee:
+              feeAndUserData.daily_fee === "NA"
+                ? null
+                : feeAndUserData.daily_fee,
+          },
+          {upsert : true}
+        );
 
         data[TOKEN] = {
             date: date,
