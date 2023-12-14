@@ -3,10 +3,7 @@ const catchAsync = require("../utils/catchAsync");
 const { getOlderDate } = require("../utils/dateUtil");
 const percChange = require("../utils/percentageChange");
 
-const tokenNames = ["Optimism", "Arbitrum", "Polygon", "Ethereum", "Lido", "Uniswap", "Maker", "Aave", "curve-dex", "Compound", "Synthetix", "Liquity", "Kyberswap-Elastic", "Chainlink",
-    // new chains added
-    "Avalanche", "Fantom", "Gnosis", "Osmosis", "PancakeSwap"
-];
+const tokenNames = ["Optimism", "Arbitrum", "Polygon", "Ethereum", "Lido", "Uniswap", "Maker", "Aave", "curve-dex", "Compound", "Synthetix", "Liquity", "Kyberswap-Elastic", "Chainlink", "Avalanche", "Fantom", "Gnosis", "Osmosis", "PancakeSwap"];
 
 // const topApi = catchAsync(async (req, res) => {
 //     const pipeline_30_days = [
@@ -165,10 +162,22 @@ const topApi = async (req, res) => {
         changePercentages.push(tempObj);
     });
 
-    console.log(changePercentages);
-    const sortedFee = changePercentages.sort(customSortMaker('feeChange')).slice(0, 5);
-    const sortedTvl = changePercentages.sort(customSortMaker('tvlChange')).slice(0, 5);
-    const sortedcirculatingSupply = changePercentages.sort(customSortMaker('circulatingSupplyChange')).slice(0, 5);
+    // console.log(changePercentages);
+
+    const sortedFee = [...changePercentages]
+        .filter((el) => el.feeChange !== "∞")
+        .sort(customSortMaker('feeChange'))
+        .slice(0, 5);
+
+    const sortedTvl = [...changePercentages]
+        .filter((el) => el.tvlChange !== "∞")
+        .sort(customSortMaker('tvlChange'))
+        .slice(0, 5);
+
+    const sortedcirculatingSupply = [...changePercentages]
+        .filter((el) => el.circulatingSupplyChange !== "∞")
+        .sort(customSortMaker('circulatingSupplyChange'))
+        .slice(0, 5);
 
     res.json({ sortedFee, sortedTvl, sortedcirculatingSupply });
 }
