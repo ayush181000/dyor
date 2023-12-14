@@ -255,16 +255,15 @@ const dataFallback = async (chainNames) => {
     let data = [];
     for (let chain of chainNames) {
         const abc = await TokenData.aggregate(returnPipeline(chain));
-
         let tempData = {
-            tvl: abc[0].total_tvl,
+            ttv: abc[0].total_ttv,
             daily_fee: abc[0].total_fee,
             fdv: null,
             holders: null,
             activeHolders: null,
             totalSupply: null,
             price: null,
-            ttv: null,
+            tvl: null,
             circulatingSupply: null,
             stakingRatio: null,
             marketCap: null
@@ -290,6 +289,7 @@ const dataFallback = async (chainNames) => {
                 activeHolders: tempData['activeHolders'] == null && _doc['activeHolders'] && (_doc['activeHolders'] > 0) ? _doc['activeHolders'] : tempData['activeHolders'],
 
                 totalSupply: tempData['totalSupply'] == null && _doc['totalSupply'] && (_doc['totalSupply'] > 0) ? _doc['totalSupply'] : tempData['totalSupply'],
+
                 daily_fee: tempData['daily_fee'] == null && _doc['daily_fee'] && (_doc['daily_fee'] > 0) ? _doc['daily_fee'] : tempData['daily_fee'],
 
                 price: tempData['price'] == null && _doc['price'] && (_doc['price'] > 0) ? _doc['price'] : tempData['price'],
@@ -322,8 +322,8 @@ const returnPipeline = (tokenName) => {
         }, {
             '$group': {
                 '_id': '$tokenName',
-                'total_tvl': {
-                    '$sum': '$tvl'
+                'total_ttv': {
+                    '$sum': '$ttv'
                 },
                 'total_fee': {
                     '$sum': '$daily_fee'
