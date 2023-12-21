@@ -51,7 +51,7 @@ async function dailyFeeAndUser(CONFIG){
             const res = await callFlipside(sql);
             console.log(res[0]);
             const res2 = await axios.get(
-              `https://api.llama.fi/summary/fees/${CONFIG.NAME}?dataType=dailyFees`
+              `https://api.llama.fi/summary/fees/${CONFIG.DEFISLUG}?dataType=dailyFees`
             );
             console.log(res2.data.total24h);
             res[0].daily_fee = res2.data.total24h;
@@ -65,7 +65,7 @@ async function dailyFeeAndUser(CONFIG){
     else{
         try {
             const res = await axios.get(
-              `https://api.llama.fi/summary/fees/${CONFIG.NAME}?dataType=dailyFees`
+              `https://api.llama.fi/summary/fees/${CONFIG.DEFISLUG}?dataType=dailyFees`
             );
             const fee = res.data.total24h;
 

@@ -9,6 +9,7 @@ const CONFIG = {
     CHAIN_ID: 1,
     CMC_ID: 1659,
     TTSLUG: "gnosis-chain",
+    DEFISLUG: "Gnosis",
   },
   AVALANCHE: {
     NAME: "Avalanche",
@@ -20,6 +21,7 @@ const CONFIG = {
     CHAIN_ID: 1,
     CMC_ID: 5805,
     TTSLUG: "avalanche",
+    DEFISLUG: "Avalanche",
   },
   FANTOM: {
     NAME: "Fantom",
@@ -31,7 +33,57 @@ const CONFIG = {
     CHAIN_ID: 1,
     CMC_ID: 3513,
     TTSLUG: "fantom",
+    DEFISLUG: "Fantom",
   },
+  BLUR: {
+    NAME: "Blur",
+    IDENTIFIER: "PROTOCOL",
+    ADDRESS: "0x5283d291dbcf85356a21ba090e6db59121208b44",
+    DECIMAL: 18,
+    SYMBOL: "BLUR",
+    CHAIN: "ethereum",
+    CHAIN_ID: 1,
+    CMC_ID: 23121,
+    TTSLUG: "blur",
+    DEFISLUG: "blur",
+  },
+  CONVEX: {
+    NAME: "Convex Finance",
+    IDENTIFIER: "PROTOCOL",
+    ADDRESS: "0x4e3fbd56cd56c3e72c1403e103b45db9da5b9d2b",
+    DECIMAL: 18,
+    SYMBOL: "CVX",
+    CHAIN: "ethereum",
+    CHAIN_ID: 1,
+    CMC_ID: 9903,
+    TTSLUG: "convex-finance",
+    DEFISLUG: "convex",
+  },
+  GOLDFINCH: {
+    NAME: "GoldFinch",
+    IDENTIFIER: "PROTOCOL",
+    ADDRESS: "0xdab396ccf3d84cf2d07c4454e10c8a6f5b008d2b",
+    DECIMAL: 18,
+    SYMBOL: "GFI",
+    CHAIN: "ethereum",
+    CHAIN_ID: 1,
+    CMC_ID: 13967,
+    TTSLUG: "goldfinch",
+    DEFISLUG: "",
+  },
+  INSTADAPP: {
+    NAME: "InstaDapp",
+    IDENTIFIER: "PROTOCOL",
+    ADDRESS: "0x6f40d4A6237C257fff2dB00FA0510DeEECd303eb",
+    DECIMAL: 18,
+    SYMBOL: "INST",
+    CHAIN: "ethereum",
+    CHAIN_ID: 1,
+    CMC_ID: 10508,
+    TTSLUG: "instadapp",
+    DEFISLUG: "",
+  },
+
   SUSHI: {
     NAME: "SushiSwap",
     IDENTIFIER: "PROTOCOL",
@@ -42,6 +94,7 @@ const CONFIG = {
     CHAIN_ID: 1,
     CMC_ID: 6758,
     TTSLUG: "sushiswap",
+    DEFISLUG: "SushiSwap",
   },
   PANCAKE: {
     NAME: "PancakeSwap",
@@ -53,6 +106,7 @@ const CONFIG = {
     CHAIN_ID: 1,
     CMC_ID: 7186,
     TTSLUG: "pancakeswap",
+    DEFISLUG: "PancakeSwap",
   },
   OSMOSIS: {
     NAME: "Osmosis",
@@ -64,6 +118,7 @@ const CONFIG = {
     CHAIN_ID: 1,
     CMC_ID: 12220,
     TTSLUG: "osmosis",
+    DEFISLUG: "Osmosis",
   },
   OPTIMISM: {
     NAME: "Optimism",
@@ -75,6 +130,7 @@ const CONFIG = {
     CHAIN_ID: 10,
     CMC_ID: 11840,
     TTSLUG: "optimism",
+    DEFISLUG: "Optimism",
   },
   ARBITRUM: {
     NAME: "Arbitrum",
@@ -86,6 +142,7 @@ const CONFIG = {
     CHAIN_ID: 42161,
     CMC_ID: 11841,
     TTSLUG: "arbitrum",
+    DEFISLUG: "Arbitrum",
   },
   POLYGON: {
     NAME: "Polygon",
@@ -97,6 +154,7 @@ const CONFIG = {
     CHAIN_ID: 137,
     CMC_ID: 3890,
     TTSLUG: "polygon",
+    DEFISLUG: "Polygon",
   },
   ETHEREUM: {
     NAME: "Ethereum",
@@ -108,6 +166,7 @@ const CONFIG = {
     CHAIN_ID: 1,
     CMC_ID: 1027,
     TTSLUG: "ethereum",
+    DEFISLUG: "Ethereum",
   },
   LIDO: {
     NAME: "Lido",
@@ -119,6 +178,7 @@ const CONFIG = {
     CHAIN_ID: 1,
     CMC_ID: 8000,
     TTSLUG: "lido-finance",
+    DEFISLUG: "Lido",
   },
   UNISWAP: {
     NAME: "Uniswap",
@@ -130,6 +190,7 @@ const CONFIG = {
     CHAIN_ID: 1,
     CMC_ID: 7083,
     TTSLUG: "uniswap",
+    DEFISLUG: "Uniswap",
   },
   MAKER: {
     NAME: "Maker",
@@ -141,6 +202,7 @@ const CONFIG = {
     CHAIN_ID: 1,
     CMC_ID: 1518,
     TTSLUG: "makerdao",
+    DEFISLUG: "Maker",
   },
   AAVE: {
     NAME: "Aave",
@@ -152,6 +214,7 @@ const CONFIG = {
     CHAIN_ID: 1,
     CMC_ID: 7278,
     TTSLUG: "aave",
+    DEFISLUG: "Aave",
   },
   CURVE: {
     NAME: "curve-dex",
@@ -163,6 +226,7 @@ const CONFIG = {
     CHAIN_ID: 1,
     CMC_ID: 6538,
     TTSLUG: "curve",
+    DEFISLUG: "curve-dex",
   },
   COMPOUND: {
     NAME: "Compound",
@@ -174,6 +238,7 @@ const CONFIG = {
     CHAIN_ID: 1,
     CMC_ID: 5692,
     TTSLUG: "compound",
+    DEFISLUG: "Compound",
   },
 
   SYNTHETIX: {
@@ -186,6 +251,7 @@ const CONFIG = {
     CHAIN_ID: 1,
     CMC_ID: 2586,
     TTSLUG: "synthetix",
+    DEFISLUG: "Synthetix",
   },
   LIQUITY: {
     NAME: "Liquity",
@@ -197,6 +263,7 @@ const CONFIG = {
     CHAIN_ID: 1,
     CMC_ID: 7429,
     TTSLUG: "liquity",
+    DEFISLUG: "Liquity",
   },
   KYBER: {
     NAME: "Kyberswap-Elastic",
@@ -208,6 +275,7 @@ const CONFIG = {
     CHAIN_ID: 1,
     CMC_ID: 9444,
     TTSLUG: "kyberswap",
+    DEFISLUG: "Kyberswap-Elastic",
   },
   CHAINLINK: {
     NAME: "Chainlink",
@@ -219,6 +287,7 @@ const CONFIG = {
     CHAIN_ID: 1,
     CMC_ID: 1975,
     TTSLUG: "chainlink",
+    DEFISLUG: "Chainlink",
   },
 };
 
