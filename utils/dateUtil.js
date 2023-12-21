@@ -17,7 +17,7 @@ function getLocalDate() {
 }
 
 // use this for data pulling
-function getCorrectedDate(date) {
+function getCorrectedDate(date = date.now()) {
     // Create a new Date object for the current date and time
     const currentDate = new Date(date);
 
