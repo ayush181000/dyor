@@ -5,6 +5,7 @@ const dailyData = require("./dailyData");
 const CONFIG = require("./config");
 
 const TokenData = require('../models/tokenData');
+require("dotenv").config({path : "../.env"});
 
 console.log('Cron script executed')
 
@@ -151,4 +152,4 @@ function getLocalDate() {
     return currentDateInIndia;
 }
 
-// dailyCron()
+dailyCron()

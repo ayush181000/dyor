@@ -6,7 +6,34 @@ const AppError = require('../utils/appError');
 const { getOlderDate } = require("../utils/dateUtil");
 const { historicalStaticData } = require("./historicalDataUtil");
 
-const tokenNames = ["Optimism", "Arbitrum", "Polygon", "Ethereum", "Lido", "Uniswap", "Maker", "Aave", "curve-dex", "Compound", "Synthetix", "Liquity", "Kyberswap-Elastic", "Chainlink", "Avalanche", "Fantom", "Gnosis", "Osmosis", "PancakeSwap", "Blur", "Convex Finance", "GoldFinch", "InstaDapp"];
+const tokenNames = [
+  "Optimism",
+  "Arbitrum",
+  "Polygon",
+  "Ethereum",
+  "Lido",
+  "Uniswap",
+  "Maker",
+  "Aave",
+  "curve-dex",
+  "Compound",
+  "Synthetix",
+  "Liquity",
+  "Kyberswap-Elastic",
+  "Chainlink",
+  "Avalanche",
+  "Fantom",
+  "Gnosis",
+  "Osmosis",
+  "PancakeSwap",
+  "Blur",
+  "Convex Finance",
+  "Sonne Finance",
+  "InstaDapp",
+  "Lyra",
+  "Perpetual Protocol",
+  "SushiSwap",
+];
 
 const homepage = catchAsync(async (req, res, next) => {
     let chainNames = tokenNames;

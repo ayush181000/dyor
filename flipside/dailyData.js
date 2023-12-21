@@ -34,7 +34,18 @@ async function dailyFeeAndUser(CONFIG){
       return res[0];
     } catch (error) {
       console.log(error);
-      return { active_users: 0, daily_fee: 0 };
+      try {
+        const res = await axios.get(
+          `https://api.llama.fi/summary/fees/${CONFIG.DEFISLUG}?dataType=dailyFees`
+        );
+        const fee = res.data.total24h;
+
+
+        return { active_users: "NA", daily_fee: fee };
+      } catch (error) {
+        console.log(error);
+        return { active_users: "NA", daily_fee: "NA" };
+      }
     }
   }
 
@@ -58,7 +69,16 @@ async function dailyFeeAndUser(CONFIG){
             return res[0];
         } catch (error) {
             console.log(error);
-            return { active_users: 0, daily_fee: 0 };
+            try {
+              const res = await axios.get(
+                `https://api.llama.fi/summary/fees/${CONFIG.DEFISLUG}?dataType=dailyFees`
+              );
+              const fee = res.data.total24h;
+              return { active_users: "NA", daily_fee: fee };
+            } catch (error) {
+              console.log(error);
+              return { active_users: "NA", daily_fee: "NA" };
+            }
         }
     }
         //FIND A NEW DAILY ACTIVE USER LOGIC
@@ -187,7 +207,7 @@ async function dailyHolderData(id ,address){
 
 async function backupTVL(CONFIG){
   try {
-    const res = await axios.get(`https://api.llama.fi/tvl/${CONFIG.NAME}`);
+    const res = await axios.get(`https://api.llama.fi/tvl/${CONFIG.DEFISLUG}`);
     console.log(res.data);
     return res.data;
   } catch (error) {
