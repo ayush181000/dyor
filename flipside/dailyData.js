@@ -24,14 +24,13 @@ async function dailyFeeAndUser(CONFIG){
      DATE(BLOCK_TIMESTAMP) = CURRENT_DATE();`;
 
     try {
-      const res = await callFlipside(sql);
-      console.log(res[0]);
+      // const res = await callFlipside(sql);
+      // console.log(res[0]);
       const res2 = await axios.get(
         `https://api.llama.fi/overview/fees/osmosis?excludeTotalDataChart=true&excludeTotalDataChartBreakdown=true&dataType=dailyFees`
       );
       console.log(res2.data.total24h);
-      res[0].daily_fee = res2.data.total24h;
-      return res[0];
+      return { active_users: "NA", daily_fee: res2.data.total24h };
     } catch (error) {
       console.log(error);
       try {
@@ -59,14 +58,13 @@ async function dailyFeeAndUser(CONFIG){
      STATUS = 'SUCCESS' AND DATE(BLOCK_TIMESTAMP) = CURRENT_DATE();`;
 
         try {
-            const res = await callFlipside(sql);
-            console.log(res[0]);
+            // const res = await callFlipside(sql);
+            // console.log(res[0]);
             const res2 = await axios.get(
               `https://api.llama.fi/summary/fees/${CONFIG.DEFISLUG}?dataType=dailyFees`
             );
             console.log(res2.data.total24h);
-            res[0].daily_fee = res2.data.total24h;
-            return res[0];
+            return { active_users: "NA", daily_fee: res2.data.total24h };
         } catch (error) {
             console.log(error);
             try {
