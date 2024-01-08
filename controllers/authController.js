@@ -223,3 +223,13 @@ exports.updatePassword = catchAsync(async (req, res, next) => {
     // $) Log in user, send JWT
     createAndSendToken(user, 200, res);
 });
+
+exports.myProfile = catchAsync(async (req, res, next) => {
+    // 1) Get user from collection
+    const user = await User.findById(req.user._id);
+
+    const referList = await ReferList.find({ referedBy: req.user._id }).populate({ path: 'referedTo', select: '-password -uniqueReferLink' })
+
+    // $) Log in user, send JWT
+    res.send({ status: 'success', user, referList });
+});

@@ -166,29 +166,41 @@ const topApi = async (req, res) => {
 
     const sortedFee = [...changePercentages]
         .filter((el) => el.feeChange !== "∞")
-        .sort(customSortMaker('feeChange'))
+        .sort(customSortMakerAscending('feeChange'))
         .slice(0, 5);
 
     const sortedTvl = [...changePercentages]
         .filter((el) => el.tvlChange !== "∞")
-        .sort(customSortMaker('tvlChange'))
+        .sort(customSortMakerAscending('tvlChange'))
         .slice(0, 5);
 
     const sortedcirculatingSupply = [...changePercentages]
         .filter((el) => el.circulatingSupplyChange !== "∞")
-        .sort(customSortMaker('circulatingSupplyChange'))
+        .sort(customSortMakerDecending('circulatingSupplyChange'))
         .slice(0, 5);
 
     res.json({ sortedFee, sortedTvl, sortedcirculatingSupply });
 }
 
-function customSortMaker(value) {
+function customSortMakerAscending(value) {
     return function (x, y) {
         if (x[value] > y[value]) {
             return -1;
         }
         if (x[value] < y[value]) {
             return 1;
+        }
+        return 0;
+    };
+}
+
+function customSortMakerDecending(value) {
+    return function (x, y) {
+        if (x[value] > y[value]) {
+            return 1;
+        }
+        if (x[value] < y[value]) {
+            return -1;
         }
         return 0;
     };
