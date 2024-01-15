@@ -26,6 +26,7 @@ const historicalStaticData = (async (tokenName) => {
         tokenTradingVolumeMetric.percChange30d,
         feeMetric.percChange30d,
         percChange(latestActiveHolders, activeHolders30d),
+        percChange(latestHolders, holders30d),
         percChange(latestCirculatingSupply, circulatingSupply30d),
         percChange(latestPrice, price30d),
         latestPrice
@@ -242,10 +243,22 @@ const getFeeInDaysDiff = (async (tokenName, startDate, endDate) => {
     });
 })
 
-const fairPriceCalculation = (tvl, ttv, fee, dau, circulatingSupply, pricePerc, price) => {
-    // console.log(tvl, ttv, fee, dau)
+const fairPriceCalculation = (tvl, ttv, fee, dau, holder, circulatingSupply, pricePerc, price) => {
+    // console.log(tvl, ttv, fee, dau, pricePerc)
     // console.log((tvl === '∞' || null ? 0 : tvl + ttv || 0 + fee || 0 + dau || 0));
-    const average_demand_change_perc = (tvl === '∞' || null ? 0 : tvl + ttv === '∞' || null ? 0 : ttv + fee === '∞' || null ? 0 : fee + dau === '∞' || null ? 0 : dau) / (tvl === null ? 0 : 1 + ttv === null ? 0 : 1 + fee === null ? 0 : 1 + dau === null ? 0 : 1);
+    const average_demand_change_perc = (
+        (tvl === '∞' || null ? 0 : tvl) +
+        (ttv === '∞' || null ? 0 : ttv) +
+        (fee === '∞' || null ? 0 : fee) +
+        (dau === '∞' || null ? 0 : dau) +
+        (holder === '∞' || null ? 0 : holder)
+    ) / (
+            (tvl === '∞' || null ? 0 : 1) +
+            (ttv === '∞' || null ? 0 : 1) +
+            (fee === '∞' || null ? 0 : 1) +
+            (dau === '∞' || null ? 0 : 1) +
+            (holder === '∞' || null ? 0 : 1)
+        );
     const average_supply_change_perc = circulatingSupply;
 
     const fair_price_percentage = average_demand_change_perc - average_supply_change_perc - pricePerc;
