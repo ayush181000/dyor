@@ -263,7 +263,12 @@ const fairPriceCalculation = (tvl, ttv, fee, dau, holder, circulatingSupply, pri
 
     const fair_price_percentage = average_demand_change_perc - average_supply_change_perc - pricePerc;
 
-    return price + (price * fair_price_percentage / 100);
+    if(fair_price_percentage < -100){
+        return price * 100 / Math.abs(fair_price_percentage); 
+    }
+    else {
+        return price + (price * fair_price_percentage / 100);
+    }
 }
 
 const dataFallback = async (chainNames) => {
