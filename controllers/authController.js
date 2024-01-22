@@ -54,6 +54,21 @@ exports.signup = catchAsync(async (req, res, next) => {
         );
     }
 
+    if (req.body.referId) {
+        const referedBy = await User.findOne({ uniqueReferLink: req.body.referId });
+        if (referedBy) {
+            await ReferList.create({
+                referedBy: referedBy._id,
+                referedTo: newUser._id,
+            });
+        } else {
+            new AppError('Refer link is wrong', 400);
+
+        }
+    } else {
+        new AppError('No refer link provided', 400);
+    }
+
     const uniqueReferLink = randomstring.generate({
         length: 10,
         charset: ['alphabetic', 'numeric']
@@ -64,15 +79,7 @@ exports.signup = catchAsync(async (req, res, next) => {
         uniqueReferLink
     });
 
-    if (req.body.referId) {
-        const referedBy = await User.findOne({ uniqueReferLink: req.body.referId });
-        if (referedBy) {
-            await ReferList.create({
-                referedBy: referedBy._id,
-                referedTo: newUser._id,
-            });
-        }
-    }
+
 
     createAndSendToken(newUser, 201, res);
 });

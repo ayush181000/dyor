@@ -144,12 +144,16 @@ const charts = catchAsync(async (req, res, next) => {
     if (!req.query.tokenName) return next(new AppError('No token name provided', 400));
 
     let tokenName = req.query.tokenName;
-    console.log(tokenName)
+    // console.log(tokenName)
 
     const chart = await TokenData.find({ tokenName }).sort({ date: -1 }).limit(365).select({
         tvl: 1,
         ttv: 1,
         activeHolders: 1,
+        price: 1,
+        holders: 1,
+        circulatingSupply: 1,
+        daily_fee: 1,
         date: 1
     });
 
