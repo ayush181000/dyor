@@ -184,23 +184,24 @@ async function getSupplyAndPrice(ids) {
 }
 
 async function dailyHolderData(id ,address){
-    try {
-        const res = await axios.get(
-          `https://api.chainbase.online/v1/token/holders?chain_id=${id}&contract_address=${address}`,
-          {
-            headers: {
-              "x-api-key": process.env.CHAINBASE_KEY,
-            },
-          }
-        );
+    // try {
+    //     const res = await axios.get(
+    //       `https://api.chainbase.online/v1/token/holders?chain_id=${id}&contract_address=${address}`,
+    //       {
+    //         headers: {
+    //           "x-api-key": process.env.CHAINBASE_KEY,
+    //         },
+    //       }
+    //     );
 
-        console.log(res.data);
-        return res.data.count;
+    //     console.log(res.data);
+    //     return res.data.count;
         
-    } catch (error) {
-        console.log(error);
-        return 0;
-    }
+    // } catch (error) {
+    //     console.log(error);
+    //     return 0;
+    // }
+    return 0;
 }
 
 async function backupTVL(CONFIG){

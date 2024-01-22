@@ -22,13 +22,13 @@ const historicalStaticData = (async (tokenName) => {
     const tokenTradingVolumeMetric = await tokenTradingVolMetricFunc(tokenName);
     const feeMetric = await feeMetricFunc(tokenName);
     const fair_price = fairPriceCalculation(
-        percChange(latestTvl, tvl30d),
-        tokenTradingVolumeMetric.percChange30d,
-        feeMetric.percChange30d,
-        percChange(latestActiveHolders, activeHolders30d),
-        percChange(latestHolders, holders30d),
-        percChange(latestCirculatingSupply, circulatingSupply30d),
-        percChange(latestPrice, price30d),
+        percChange(latestTvl, tvl90d),
+        tokenTradingVolumeMetric.percChange90d,
+        feeMetric.percChange90d,
+        percChange(latestActiveHolders, activeHolders90d),
+        percChange(latestHolders, holders90d),
+        percChange(latestCirculatingSupply, circulatingSupply90d),
+        percChange(latestPrice, price90d),
         latestPrice
     );
 
@@ -263,7 +263,12 @@ const fairPriceCalculation = (tvl, ttv, fee, dau, holder, circulatingSupply, pri
 
     const fair_price_percentage = average_demand_change_perc - average_supply_change_perc - pricePerc;
 
-    return price + (price * fair_price_percentage / 100);
+    if(fair_price_percentage < -100){
+        return price * 100 / Math.abs(fair_price_percentage); 
+    }
+    else {
+        return price + (price * fair_price_percentage / 100);
+    }
 }
 
 const dataFallback = async (chainNames) => {
