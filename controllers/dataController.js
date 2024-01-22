@@ -52,8 +52,8 @@ const dataFallback = async (chainNames) => {
     for (let chain of chainNames) {
         const abc = await TokenData.aggregate(returnPipeline(chain));
         let tempData = {
-            ttv: abc[0].total_ttv,
-            daily_fee: abc[0].total_fee,
+            ttv: abc[0]?.total_ttv || "NA",
+            daily_fee: abc[0]?.total_fee || "NA",
             fdv: null,
             holders: null,
             activeHolders: null,
