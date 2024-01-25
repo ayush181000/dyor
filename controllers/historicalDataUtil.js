@@ -263,8 +263,9 @@ const fairPriceCalculation = (tvl, ttv, fee, dau, holder, circulatingSupply, pri
 
     const fair_price_percentage = average_demand_change_perc - average_supply_change_perc - pricePerc;
 
-    if (fair_price_percentage < -100) {
-        return price * 100 / Math.abs(fair_price_percentage);
+    if (fair_price_percentage < -0) {
+      //C/{1-(G/100)}
+      return price / (1 - (fair_price_percentage/100));
     }
     else {
         return price + (price * fair_price_percentage / 100);
