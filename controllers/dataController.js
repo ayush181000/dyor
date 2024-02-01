@@ -27,7 +27,7 @@ const tokenNames = [
     "PancakeSwap",
     "Blur",
     "Convex Finance",
-    "InstaDapp",
+    // "InstaDapp",
     "Lyra",
     "Perpetual Protocol",
     "SushiSwap",
