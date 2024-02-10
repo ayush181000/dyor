@@ -1,5 +1,5 @@
 const TokenData = require("../models/tokenData");
-const { getLocalDate, getOlderDate } = require("../utils/dateUtil");
+const { getOlderDate } = require("../utils/dateUtil");
 const percChange = require('../utils/percentageChange');
 
 const historicalStaticData = (async (tokenName) => {
@@ -264,8 +264,8 @@ const fairPriceCalculation = (tvl, ttv, fee, dau, holder, circulatingSupply, pri
     const fair_price_percentage = average_demand_change_perc - average_supply_change_perc - pricePerc;
 
     if (fair_price_percentage < -0) {
-      //C/{1-(G/100)}
-      return price / (1 - (fair_price_percentage/100));
+        //C/{1-(G/100)}
+        return price / (1 - (fair_price_percentage / 100));
     }
     else {
         return price + (price * fair_price_percentage / 100);

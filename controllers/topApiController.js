@@ -2,77 +2,75 @@ const TokenData = require("../models/tokenData");
 const catchAsync = require("../utils/catchAsync");
 const { getOlderDate } = require("../utils/dateUtil");
 const percChange = require("../utils/percentageChange");
+const { promisify } = require('util');
 
-const tokenNames = ["Optimism", "Arbitrum", "Polygon", "Ethereum", "Lido", "Uniswap", "Maker", "Aave", "curve-dex", "Compound", "Synthetix", "Liquity", "Kyberswap-Elastic", "Chainlink", "Avalanche", "Fantom", "Gnosis", "Osmosis", "PancakeSwap"];
+const { tokenNames } = require('./constants');
 
-// const topApi = catchAsync(async (req, res) => {
-//     const pipeline_30_days = [
-//         {
-//             '$match': {
-//                 'date': {
-//                     '$gte': getOlderDate('30d'),
-//                     '$lt': getOlderDate(),
-//                 }
-//             }
-//         }, {
-//             '$group': {
-//                 '_id': '$tokenName',
-//                 'tvl': { '$sum': '$tvl' },
-//                 'fee': { '$sum': '$daily_fee' },
-//                 'circulatingSupply': { '$sum': '$circulatingSupply' },
-//             }
-//         }, {
-//             '$sort': {
-//                 '_id': 1
-//             }
-//         }
-//     ];
+let cache = null;
 
-//     const pipeline_60_days = [
-//         {
-//             '$match': {
-//                 'date': {
-//                     '$gte': getOlderDate('60d'),
-//                     '$lt': getOlderDate('30d'),
-//                 }
-//             }
-//         }, {
-//             '$group': {
-//                 '_id': '$tokenName',
-//                 'tvl': { '$sum': '$tvl' },
-//                 'fee': { '$sum': '$daily_fee' },
-//                 'circulatingSupply': { '$sum': '$circulatingSupply' },
-//             }
-//         }, {
-//             '$sort': {
-//                 '_id': 1
-//             }
-//         }
-//     ];
+const reduceData = async (tokenNames) => {
+    const result = [];
 
-//     const data_30days = await TokenData.aggregate(pipeline_30_days);
-//     const data_60days = await TokenData.aggregate(pipeline_60_days);
+    for (let i = 0; i < tokenNames.length; i++) {
+        const token = tokenNames[i];
+        const data = await TokenData.find({ tokenName: token }).sort({ date: -1 }).limit(60);
 
-//     // console.log(data_30days, data_60days)
+        const initialValue = {
+            tvl: 0,
+            fee: 0,
+            circulatingSupply: 0,
+            elementCount: 0,
+        }
 
-//     const percentageChanges = [];
+        const reducer = (accumulator, currentValue) => {
+            return {
+                tvl: accumulator.tvl + currentValue.tvl !== null ? currentValue.tvl : 0,
+                fee: accumulator.fee + currentValue.daily_fee !== null ? currentValue.daily_fee : 0,
+                circulatingSupply: accumulator.circulatingSupply + currentValue.circulatingSupply !== null ? currentValue.circulatingSupply : 0,
+                elementCount: accumulator.elementCount + 1,
+            }
+        }
 
-//     for (let i = 0; i < data_30days.length; i++) {
-//         console.log(data_30days[i], data_60days[i])
-//         const tempArr = {
-//             tokenName: data_30days[i]._id,
-//             tvlChange: percChange(data_30days[i].tvl, data_60days[i].tvl),
-//             feeChange: percChange(data_30days[i].fee, data_60days[i].fee),
-//             circulatingSupplyChange: percChange(data_30days[i].circulatingSupply, data_60days[i].circulatingSupply),
-//         }
-//         percentageChanges.push(tempArr);
-//     }
+        const data_30_days = data.slice(0, 30).reduce(reducer, initialValue);
+        const data_60_days = data.slice(30, 60).reduce(reducer, initialValue);;
 
-//     res.json({ percentageChanges });
-// })
+        // console.log(data_30_days)
+        // console.log(data_60_days)
 
+        result.push({
+            tokenName: token,
+            feeChange: percChange(data_30_days.fee, data_60_days.fee),
+            tvlChange: percChange(data_30_days.tvl, data_60_days.tvl),
+            circulatingSupplyChange: percChange(data_30_days.circulatingSupply, data_60_days.circulatingSupply),
+        });
+    }
 
-const topApi = async (req, res) => {
+    return (result);
+}
+
+const topApi1 = catchAsync(async (req, res) => {
+    const result = await reduceData(tokenNames);
+
+    // console.log("Result", result);
+    const sortedFee = [...result]
+        .filter((el) => el.feeChange !== "∞")
+        .sort(customSortMakerAscending('feeChange'))
+        .slice(0, 5);
+
+    const sortedTvl = [...result]
+        .filter((el) => el.tvlChange !== "∞")
+        .sort(customSortMakerAscending('tvlChange'))
+        .slice(0, 5);
+
+    const sortedcirculatingSupply = [...result]
+        .filter((el) => el.circulatingSupplyChange !== "∞")
+        .sort(customSortMakerDecending('circulatingSupplyChange'))
+        .slice(0, 5);
+
+    res.json({ sortedFee, sortedTvl, sortedcirculatingSupply });
+})
+
+const topApi = catchAsync(async (req, res) => {
     const pipeline = [
         {
             '$match': {
@@ -144,6 +142,7 @@ const topApi = async (req, res) => {
 
     const total = await TokenData.aggregate(pipeline);
 
+    console.log(total)
     const changePercentages = [];
 
     total.forEach(element => {
@@ -181,6 +180,7 @@ const topApi = async (req, res) => {
 
     res.json({ sortedFee, sortedTvl, sortedcirculatingSupply });
 }
+)
 
 function customSortMakerAscending(value) {
     return function (x, y) {
@@ -207,4 +207,4 @@ function customSortMakerDecending(value) {
 }
 
 
-module.exports = { topApi }
+module.exports = { topApi, topApi1 }
