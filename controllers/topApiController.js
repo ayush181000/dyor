@@ -8,6 +8,8 @@ const { historicalDataForTop } = require("./historicalDataUtil");
 const { tokenNames } = require('./constants');
 
 let cache = null;
+let cacheTime = null;
+let hoursPassed = null;
 
 const reduceData = async (tokenNames) => {
     const result = [];
@@ -66,25 +68,43 @@ const reduceData2 = async (tokenNames) => {
 };
 
 const topApi1 = catchAsync(async (req, res) => {
-    const result = await reduceData2(tokenNames);
 
-    // console.log("Result", result);
-    const sortedFee = [...result]
-        .filter((el) => el.feeChange !== "∞")
-        .sort(customSortMakerAscending('feeChange'))
-        .slice(0, 5);
+    const currTime = Date.now();
+    if(cacheTime){
+        hoursPassed = Math.abs(currTime - cacheTime) / 36e5;
+    }
+    
+    if(cache && cacheTime && hoursPassed < 1){
+        res.json(cache);
+    }
 
-    const sortedTvl = [...result]
-        .filter((el) => el.tvlChange !== "∞")
-        .sort(customSortMakerAscending('tvlChange'))
-        .slice(0, 5);
+    else{
+        const result = await reduceData2(tokenNames);
 
-    const sortedcirculatingSupply = [...result]
-        .filter((el) => el.circulatingSupplyChange !== "∞")
-        .sort(customSortMakerDecending('circulatingSupplyChange'))
-        .slice(0, 5);
+        // console.log("Result", result);
+        const sortedFee = [...result]
+          .filter((el) => el.feeChange !== "∞")
+          .sort(customSortMakerAscending("feeChange"))
+          .slice(0, 5);
 
-    res.json({ sortedFee, sortedTvl, sortedcirculatingSupply });
+        const sortedTvl = [...result]
+          .filter((el) => el.tvlChange !== "∞")
+          .sort(customSortMakerAscending("tvlChange"))
+          .slice(0, 5);
+
+        const sortedcirculatingSupply = [...result]
+          .filter((el) => el.circulatingSupplyChange !== "∞")
+          .sort(customSortMakerDecending("circulatingSupplyChange"))
+          .slice(0, 5);
+
+        //set cache
+        cache = { sortedFee, sortedTvl, sortedcirculatingSupply };
+        cacheTime = Date.now();
+
+
+        res.json({ sortedFee, sortedTvl, sortedcirculatingSupply });
+    }
+
 })
 
 const topApi = catchAsync(async (req, res) => {
