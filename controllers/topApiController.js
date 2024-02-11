@@ -3,6 +3,7 @@ const catchAsync = require("../utils/catchAsync");
 const { getOlderDate } = require("../utils/dateUtil");
 const percChange = require("../utils/percentageChange");
 const { promisify } = require('util');
+const {historicalStaticData} = require('./historicalDataUtil');
 
 const { tokenNames } = require('./constants');
 
@@ -48,8 +49,24 @@ const reduceData = async (tokenNames) => {
     return (result);
 }
 
+const reduceData2 = async (tokenNames) => {
+  const result = [];
+    for (let i = 0; i < tokenNames.length; i++) {
+        const token = tokenNames[i];
+        const historicalData = await historicalStaticData(token);
+        result.push({
+          tokenName: token,
+          feeChange: historicalData.feeMetric.percChange30d,
+          tvlChange: historicalData.tvlMetric.percChange30d,
+          circulatingSupplyChange: historicalData.supplyMetric.percChange30d,
+        });
+    }
+
+    return result;
+};
+
 const topApi1 = catchAsync(async (req, res) => {
-    const result = await reduceData(tokenNames);
+    const result = await reduceData2(tokenNames);
 
     // console.log("Result", result);
     const sortedFee = [...result]

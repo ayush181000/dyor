@@ -354,4 +354,4 @@ const returnPipeline = (tokenName) => {
     ]
 }
 
-module.exports = { historicalStaticData }
+module.exports = { historicalStaticData};
