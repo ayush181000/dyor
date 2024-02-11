@@ -354,4 +354,68 @@ const returnPipeline = (tokenName) => {
     ]
 }
 
-module.exports = { historicalStaticData};
+const historicalDataForTop = async (tokenName) => {
+  const nullObject = {
+    price: null,
+    circulatingSupply: null,
+    tvl: null,
+    holders: null,
+    activeHolders: null,
+  };
+
+  const latestData = await dataFallback([tokenName]);
+
+  const latestCirculatingSupply = latestData[0]?.circulatingSupply || null;
+  const latestTvl = latestData[0]?.tvl || null;
+
+  const {
+    price: price24h,
+    circulatingSupply: circulatingSupply24h,
+    tvl: tvl24h,
+    holders: holders24h,
+    activeHolders: activeHolders24h,
+  } = (await TokenData.findOne({ tokenName, date: getOlderDate("24h") })) ||
+  nullObject;
+  const {
+    price: price30d,
+    circulatingSupply: circulatingSupply30d,
+    tvl: tvl30d,
+    holders: holders30d,
+    activeHolders: activeHolders30d,
+  } = (await TokenData.findOne({ tokenName, date: getOlderDate("30d") })) ||
+  nullObject;
+
+  const feeMetric = await feeMetricFuncForTOP(tokenName);
+
+  return {
+    supplyMetric: {
+      latestCirculatingSupply,
+      circulatingSupply24h,
+      circulatingSupply30d,
+      percChange24h: percChange(latestCirculatingSupply, circulatingSupply24h),
+      percChange30d: percChange(latestCirculatingSupply, circulatingSupply30d),
+    },
+    tvlMetric: {
+      latestTvl,
+      tvl24h,
+      tvl30d,
+      percChange24h: percChange(latestTvl, tvl24h),
+      percChange30d: percChange(latestTvl, tvl30d),
+    },
+    feeMetric,
+  };
+};
+const feeMetricFuncForTOP = async (tokenName) => {
+  const latestFee = await getFeeInDays(tokenName, "30d");
+
+  const sum30days = await getFeeInDaysDiff(tokenName, "60d", "30d");
+
+
+  return {
+    latestFee,
+    sum30days,
+    percChange30d: percChange(latestFee, sum30days)
+  };
+};
+
+module.exports = { historicalStaticData, historicalDataForTop };
