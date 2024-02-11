@@ -8,7 +8,7 @@ const CONFIG = {
     CHAIN: "gnosis",
     CHAIN_ID: 1,
     CMC_ID: 1659,
-    TTSLUG: "gnosis-chain",
+    TTSLUG: "gnosis",
     DEFISLUG: "Gnosis",
   },
   AVALANCHE: {
