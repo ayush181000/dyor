@@ -9,6 +9,6 @@ router.get('/dashboard',protect, dashboard);
 router.get('/top',protect, topApi1);
 // router.get('/top1', topApi1);
 router.get('/charts',protect, charts);
-router.get('/test' , (req , res)=>{res.send("hi")} );
+// router.get('/test' , (req , res)=>{res.send("hi")} );
 
 module.exports = router;

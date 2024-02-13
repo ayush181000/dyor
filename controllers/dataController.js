@@ -8,32 +8,9 @@ const { historicalStaticData } = require("./historicalDataUtil");
 
 const { tokenNames } = require('./constants');
 
-// const tokenNames = [
-//     "Optimism",
-//     "Arbitrum",
-//     "Polygon",
-//     "Ethereum",
-//     "Lido",
-//     "Uniswap",
-//     "Maker",
-//     "Aave",
-//     "curve-dex",
-//     "Compound",
-//     "Synthetix",
-//     "Liquity",
-//     "Kyberswap-Elastic",
-//     "Chainlink",
-//     "Fantom",
-//     "Gnosis",
-//     "Osmosis",
-//     "PancakeSwap",
-//     "Blur",
-//     "Convex Finance",
-//     // "InstaDapp",
-//     "Lyra",
-//     "Perpetual Protocol",
-//     "SushiSwap",
-// ];
+let cache = null;
+let cacheTime = null;
+let hoursPassed = null;
 
 const homepage = catchAsync(async (req, res, next) => {
     let chainNames = tokenNames;
@@ -44,9 +21,23 @@ const homepage = catchAsync(async (req, res, next) => {
         console.log(chainNames);
     }
 
-    const data = await dataFallback(chainNames);
+    console.log(cache);
+    console.log(cacheTime);
+    const currTime = Date.now();
+    if (cacheTime) {
+      hoursPassed = Math.abs(currTime - cacheTime) / 36e5;
+    }
 
-    res.send({ status: "success", data });
+    if (cache && cacheTime && hoursPassed < 0.5) {
+      res.send({ status: "success", data : cache });
+    } else{
+        const data = await dataFallback(chainNames);
+        cache = data;
+        cacheTime = Date.now();
+        res.send({ status: "success", data });
+    }
+
+    
 })
 
 const dataFallback = async (chainNames) => {
