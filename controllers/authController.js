@@ -57,6 +57,15 @@ exports.signup = catchAsync(async (req, res, next) => {
     if (req.body.referId) {
         const referedBy = await User.findOne({ uniqueReferLink: req.body.referId });
         if (referedBy) {
+            const uniqueReferLink = randomstring.generate({
+              length: 10,
+              charset: ["alphabetic", "numeric"],
+            });
+
+            const newUser = await User.create({
+              ...req.body,
+              uniqueReferLink,
+            });
             await ReferList.create({
                 referedBy: referedBy._id,
                 referedTo: newUser._id,
@@ -68,16 +77,6 @@ exports.signup = catchAsync(async (req, res, next) => {
     } else {
         return next(new AppError('No refer link provided', 400));
     }
-
-    const uniqueReferLink = randomstring.generate({
-        length: 10,
-        charset: ['alphabetic', 'numeric']
-    });
-
-    const newUser = await User.create({
-        ...req.body,
-        uniqueReferLink
-    });
 
 
 
