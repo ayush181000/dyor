@@ -62,11 +62,11 @@ exports.signup = catchAsync(async (req, res, next) => {
                 referedTo: newUser._id,
             });
         } else {
-            new AppError('Refer link is wrong', 400);
+            return next(new AppError('Refer link is wrong', 400));
 
         }
     } else {
-        new AppError('No refer link provided', 400);
+        return next(new AppError('No refer link provided', 400));
     }
 
     const uniqueReferLink = randomstring.generate({
@@ -97,7 +97,7 @@ exports.login = catchAsync(async (req, res, next) => {
 
     // 1) check if email and password exists
     if (!email || !password) {
-        next(new AppError('Please provide email and password', 400));
+        return next(new AppError('Please provide email and password', 400));
     }
 
     // 2) check if user exists and password is correct
