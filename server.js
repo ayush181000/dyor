@@ -19,7 +19,12 @@ const app = express();
 // 1) GLOBAL MIDDLEWARES
 
 // Add cross origin
-app.use(cors());
+app.use(
+  cors({
+    origin: ["https://www.dyor.ag/", "https://dyor.ag/"],
+    methods: ["GET", "POST" , "PATCH"],
+  })
+);
 
 // Set security HTTP headers
 app.use(helmet());

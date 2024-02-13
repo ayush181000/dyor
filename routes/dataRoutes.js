@@ -4,10 +4,11 @@ const { protect } = require("../controllers/authController");
 const { homepage, dashboard, charts } = require("../controllers/dataController");
 const { topApi, topApi1 } = require("../controllers/topApiController");
 
-router.get('/homepage', homepage);
-router.get('/dashboard', dashboard);
-router.get('/top', topApi1);
+router.get('/homepage', protect, homepage);
+router.get('/dashboard',protect, dashboard);
+router.get('/top',protect, topApi1);
 // router.get('/top1', topApi1);
-router.get('/charts', charts);
+router.get('/charts',protect, charts);
+router.get('/test' , (req , res)=>{res.send("hi")} );
 
 module.exports = router;
