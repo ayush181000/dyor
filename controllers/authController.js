@@ -70,6 +70,8 @@ exports.signup = catchAsync(async (req, res, next) => {
                 referedBy: referedBy._id,
                 referedTo: newUser._id,
             });
+
+            createAndSendToken(newUser, 201, res);
         } else {
             return next(new AppError('Refer link is wrong', 400));
 
@@ -77,10 +79,6 @@ exports.signup = catchAsync(async (req, res, next) => {
     } else {
         return next(new AppError('No refer link provided', 400));
     }
-
-
-
-    createAndSendToken(newUser, 201, res);
 });
 
 exports.login = catchAsync(async (req, res, next) => {
