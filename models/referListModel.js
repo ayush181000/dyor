@@ -2,10 +2,10 @@ const mongoose = require('mongoose');
 
 const referListSchema = mongoose.Schema({
     referedBy: {
-        type: mongoose.Schema.Types.ObjectId, ref: 'user'
+        type: mongoose.Schema.Types.ObjectId, ref: 'User'
     },
     referedTo: {
-        type: mongoose.Schema.Types.ObjectId, ref: 'user',
+        type: mongoose.Schema.Types.ObjectId, ref: 'User',
         unique: true
     },
     createdAt: {
