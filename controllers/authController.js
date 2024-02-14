@@ -58,13 +58,13 @@ exports.signup = catchAsync(async (req, res, next) => {
         const referedBy = await User.findOne({ uniqueReferLink: req.body.referId });
         if (referedBy) {
             const uniqueReferLink = randomstring.generate({
-              length: 10,
-              charset: ["alphabetic", "numeric"],
+                length: 10,
+                charset: ["alphabetic", "numeric"],
             });
 
             const newUser = await User.create({
-              ...req.body,
-              uniqueReferLink,
+                ...req.body,
+                uniqueReferLink,
             });
             await ReferList.create({
                 referedBy: referedBy._id,
@@ -161,9 +161,7 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
 
     // 3) Send it to users email
     try {
-        const resetURL = `${req.protocol}://${req.get(
-            'host'
-        )}/resetPassword/${await resetToken}`;
+        const resetURL = `https://www.dyor.ag/forgetPassword/${await resetToken}`;
         await new Email(user, resetURL).sendPasswordReset();
 
         res.status(200).json({
@@ -233,7 +231,7 @@ exports.myProfile = catchAsync(async (req, res, next) => {
     const user = await User.findById(req.user._id);
 
     const referList = await ReferList.find({
-      referedBy: req.user._id,
+        referedBy: req.user._id,
     }).populate({ path: "referedTo", select: "-password -uniqueReferLink" });
 
     // $) Log in user, send JWT
