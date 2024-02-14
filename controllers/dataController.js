@@ -25,19 +25,19 @@ const homepage = catchAsync(async (req, res, next) => {
     console.log(cacheTime);
     const currTime = Date.now();
     if (cacheTime) {
-      hoursPassed = Math.abs(currTime - cacheTime) / 36e5;
+        hoursPassed = Math.abs(currTime - cacheTime) / 36e5;
     }
 
     if (cache && cacheTime && hoursPassed < 0.5) {
-      res.send({ status: "success", data : cache });
-    } else{
+        res.send({ status: "success", data: cache });
+    } else {
         const data = await dataFallback(chainNames);
         cache = data;
         cacheTime = Date.now();
         res.send({ status: "success", data });
     }
 
-    
+
 })
 
 const dataFallback = async (chainNames) => {
@@ -133,24 +133,42 @@ const dashboard = catchAsync(async (req, res, next) => {
     res.send({ status: "success", tokenName, ...historicalMetric });
 })
 
+
+let chartCache = {};
+let chartCacheTime = null;
+let chartHoursPassed = null;
+
 const charts = catchAsync(async (req, res, next) => {
     if (!req.query.tokenName) return next(new AppError('No token name provided', 400));
 
     let tokenName = req.query.tokenName;
-    // console.log(tokenName)
 
-    const chart = await TokenData.find({ tokenName }).sort({ date: -1 }).limit(365).select({
-        tvl: 1,
-        ttv: 1,
-        activeHolders: 1,
-        price: 1,
-        holders: 1,
-        circulatingSupply: 1,
-        daily_fee: 1,
-        date: 1
-    });
+    const currTime = Date.now();
+    if (chartCacheTime) {
+        chartHoursPassed = Math.abs(currTime - chartCacheTime) / 36e5;
+    }
 
-    res.send({ status: "success", tokenName, chart });
+    if (chartCache[tokenName] && chartHoursPassed < 1) {
+        console.log("chart cache sent");
+        return res.send({ status: "success", tokenName, chart: chartCache[tokenName] });
+    } else {
+        const chart = await TokenData.find({ tokenName }).sort({ date: -1 }).limit(365).select({
+            tvl: 1,
+            ttv: 1,
+            activeHolders: 1,
+            price: 1,
+            holders: 1,
+            circulatingSupply: 1,
+            daily_fee: 1,
+            date: 1
+        });
+
+        //set cache
+        chartCache[tokenName] = chart
+        chartCacheTime = Date.now();
+
+        res.send({ status: "success", tokenName, chart });
+    }
 })
 
 module.exports = { dataFallback, charts, dashboard, homepage }
