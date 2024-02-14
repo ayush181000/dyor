@@ -12,7 +12,7 @@ const tokenNames = [
     "Synthetix",
     "Liquity",
     "Kyberswap-Elastic",
-    "Chainlink",
+    // "Chainlink",
     "Fantom",
     "Gnosis",
     "Osmosis",
