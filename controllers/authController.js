@@ -237,3 +237,10 @@ exports.myProfile = catchAsync(async (req, res, next) => {
     // $) Log in user, send JWT
     res.send({ status: 'success', user, referList });
 });
+
+exports.userCount = catchAsync(async (req, res, next) => {
+  // 1) Get userCount from collection
+  const userCount = await User.countDocuments({});
+
+  res.send({ status: "success", userCount });
+});
