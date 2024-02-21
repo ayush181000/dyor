@@ -73,7 +73,7 @@ const addNewToken = async (tokenName, cmcId, ttslug) => {
 
 }
 
-addNewToken("Sonne Finance", "22001", "sonne");
+addNewToken("dYdX", "28324", "dydx");
 const delay = ms => new Promise(res => setTimeout(res, ms));
 
 

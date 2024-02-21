@@ -313,6 +313,18 @@ const CONFIG = {
     TTSLUG: "chainlink",
     DEFISLUG: "Chainlink",
   },
+  DYDX: {
+    NAME: "dYdX",
+    IDENTIFIER: "PROTOCOL",
+    ADDRESS: "",
+    DECIMAL: 18,
+    SYMBOL: "DYDX",
+    CHAIN: "optimism",
+    CHAIN_ID: 10,
+    CMC_ID: 28324,
+    TTSLUG: "dydx",
+    DEFISLUG: "dydx",
+  },
 };
 
 module.exports = CONFIG;

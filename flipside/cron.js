@@ -5,6 +5,7 @@ const dailyData = require("./dailyData");
 const CONFIG = require("./config");
 
 const TokenData = require('../models/tokenData');
+const { default: axios } = require('axios');
 require("dotenv").config({ path: "../.env" });
 
 console.log('Cron script executed')
@@ -49,87 +50,180 @@ async function dailyCron() {
 
   for (const TOKEN in CONFIG) {
 
-    // const ttvData = await dailyData.dailyTTV(CONFIG[TOKEN]);
-    const feeAndUserData = await dailyData.dailyFeeAndUser(CONFIG[TOKEN]);
+    if(CONFIG[TOKEN].NAME === 'dYdX'){
+      const feeAndUserData = await dailyData.dailyFeeAndUser(CONFIG[TOKEN]);
+      
+      //cmc
+      let price = 0;
+      let totalSupply = 0;
+      let fdv = 0;
 
-    let tvl = 0;
+      //will auto update from TTsync
+      let volume = null;
+      const tvl = null;
+      let holders = null;
 
-    for (const item of tvlData) {
-      if (
-        CONFIG[TOKEN].CMC_ID == item.cmcId ||
-        CONFIG[TOKEN].CMC_ID == item.cmcId
-      ) {
-        console.log("LOOK HERE FOR TVL");
-        console.log(item);
-        tvl == 0 ? (tvl = item.tvl) : console.log("repeat tvl check");
+      //Datalense
+      let circulatingSupply = 0;
+      let active_users = 0;
+
+      try {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0'); // Month is zero-indexed
+        const day = String(date.getDate()).padStart(2, '0');
+
+        const formattedDate = `${year}-${month}-${day}`;
+
+        const res1 = await axios.get(
+          `https://www.datalenses.zone/numia/dydx/lenses/token_supply_metrics?start_date=${formattedDate}&end_date=${formattedDate}&unit=dydx`
+        );
+
+        circulatingSupply = res1.data[0].liquid;
+        
+      } catch (error) {
+        console.log(error);
       }
-    }
-    if (tvl == 0) {
-      tvl = await dailyData.backupTVL(CONFIG[TOKEN]);
-    }
+      try {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, "0"); // Month is zero-indexed
+        const day = String(date.getDate()).padStart(2, "0");
 
-    let price = 0;
-    let circulatingSupply = 0;
-    let totalSupply = 0;
-    let fdv = 0
-    let mcap = 0
-    let volume = 0;
+        const formattedDate = `${year}-${month}-${day}`;
 
-    const cmcData = priceAndSupply[CONFIG[TOKEN].CMC_ID];
-    if (cmcData) {
-      circulatingSupply = cmcData.circulating_supply;
-      price = cmcData.quote.USD.price;
-      totalSupply = cmcData.total_supply;
-      fdv = cmcData.quote.USD.fully_diluted_market_cap;
-      mcap = cmcData.quote.USD.market_cap;
-      volume = cmcData.quote.USD.volume_24h;
-    }
-    let holders = 0;
-    if (CONFIG[TOKEN].IDENTIFIER == "PROTOCOL")
-      holders = await dailyData.dailyHolderData(CONFIG[TOKEN].CHAIN_ID, CONFIG[TOKEN].ADDRESS);
+        const res1 = await axios.get(
+          `https://www.datalenses.zone/numia/dydx/lenses/users_activity_distribution?time_resolution=day&start_date=${formattedDate}&end_date=${formattedDate}`
+        );
+
+        active_users = res1.data[0].active_users;
+
+      } catch (error) {
+        console.log(error);
+      }
+      
 
 
-    //write staking ratio code foe avl lines
-    const writtenData = await TokenData.findOneAndUpdate(
-      { tokenName: CONFIG[TOKEN].NAME, date: date },
-      {
-        tokenName: CONFIG[TOKEN].NAME,
+      const cmcData = priceAndSupply[CONFIG[TOKEN].CMC_ID];
+      if (cmcData) {
+        price = cmcData.quote.USD.price;
+        totalSupply = cmcData.total_supply;
+        fdv = cmcData.quote.USD.fully_diluted_market_cap;
+      }
+
+      const writtenData = await TokenData.findOneAndUpdate(
+        { tokenName: CONFIG[TOKEN].NAME, date: date },
+        {
+          tokenName: CONFIG[TOKEN].NAME,
+          date: date,
+          price: price === "NA" ? null : price,
+          tvl: tvl === "NA" ? null : tvl,
+          ttv: volume === "NA" ? null : volume,
+          fdv: fdv === "NA" ? null : fdv,
+          holders: holders === "NA" ? null : holders,
+          circulatingSupply:
+            circulatingSupply === "NA" ? null : circulatingSupply,
+          totalSupply: totalSupply === "NA" ? null : totalSupply,
+          activeHolders: active_users === "NA" ? null : active_users,
+          daily_fee:
+            feeAndUserData.daily_fee === "NA" ? null : feeAndUserData.daily_fee,
+        },
+        { upsert: true }
+      );
+
+      data[TOKEN] = {
         date: date,
-        price: price === "NA" ? null : price,
-        tvl: tvl === "NA" ? null : tvl,
-        ttv: volume === "NA" ? null : volume,
-        fdv: fdv === "NA" ? null : fdv,
-        holders: holders === "NA" ? null : holders,
-        circulatingSupply:
-          circulatingSupply === "NA" ? null : circulatingSupply,
-        totalSupply: totalSupply === "NA" ? null : totalSupply,
-        activeHolders:
-          feeAndUserData.active_users === "NA"
-            ? null
-            : feeAndUserData.active_users,
-        daily_fee:
-          feeAndUserData.daily_fee === "NA"
-            ? null
-            : feeAndUserData.daily_fee,
-      },
-      { upsert: true }
-    );
+        name: CONFIG[TOKEN].NAME,
+        tvl: tvl,
+        price: price,
+        circulatingSupply: circulatingSupply,
+        totalSupply: totalSupply,
+        ttv: volume,
+        fdv: fdv,
+        holders: holders,
+        activeHolders: feeAndUserData.active_users,
+        daily_fee: feeAndUserData.daily_fee,
+      };
+    }
+    else{
+      // const ttvData = await dailyData.dailyTTV(CONFIG[TOKEN]);
+      const feeAndUserData = await dailyData.dailyFeeAndUser(CONFIG[TOKEN]);
 
-    data[TOKEN] = {
-      date: date,
-      name: CONFIG[TOKEN].NAME,
-      tvl: tvl,
-      price: price,
-      circulatingSupply: circulatingSupply,
-      totalSupply: totalSupply,
-      ttv: volume,
-      fdv: fdv,
-      holders: holders,
-      activeHolders: feeAndUserData.active_users,
-      daily_fee: feeAndUserData.daily_fee,
-    };
+      let tvl = 0;
 
-    // throw new Error("MAnually triggered");
+      for (const item of tvlData) {
+        if (
+          CONFIG[TOKEN].CMC_ID == item.cmcId ||
+          CONFIG[TOKEN].CMC_ID == item.cmcId
+        ) {
+          console.log("LOOK HERE FOR TVL");
+          console.log(item);
+          tvl == 0 ? (tvl = item.tvl) : console.log("repeat tvl check");
+        }
+      }
+      if (tvl == 0) {
+        tvl = await dailyData.backupTVL(CONFIG[TOKEN]);
+      }
+
+      let price = 0;
+      let circulatingSupply = 0;
+      let totalSupply = 0;
+      let fdv = 0;
+      let mcap = 0;
+      let volume = 0;
+
+      const cmcData = priceAndSupply[CONFIG[TOKEN].CMC_ID];
+      if (cmcData) {
+        circulatingSupply = cmcData.circulating_supply;
+        price = cmcData.quote.USD.price;
+        totalSupply = cmcData.total_supply;
+        fdv = cmcData.quote.USD.fully_diluted_market_cap;
+        mcap = cmcData.quote.USD.market_cap;
+        volume = cmcData.quote.USD.volume_24h;
+      }
+      let holders = 0;
+      if (CONFIG[TOKEN].IDENTIFIER == "PROTOCOL")
+        holders = await dailyData.dailyHolderData(
+          CONFIG[TOKEN].CHAIN_ID,
+          CONFIG[TOKEN].ADDRESS
+        );
+
+      //write staking ratio code foe avl lines
+      const writtenData = await TokenData.findOneAndUpdate(
+        { tokenName: CONFIG[TOKEN].NAME, date: date },
+        {
+          tokenName: CONFIG[TOKEN].NAME,
+          date: date,
+          price: price === "NA" ? null : price,
+          tvl: tvl === "NA" ? null : tvl,
+          ttv: volume === "NA" ? null : volume,
+          fdv: fdv === "NA" ? null : fdv,
+          holders: holders === "NA" ? null : holders,
+          circulatingSupply:
+            circulatingSupply === "NA" ? null : circulatingSupply,
+          totalSupply: totalSupply === "NA" ? null : totalSupply,
+          activeHolders:
+            feeAndUserData.active_users === "NA"
+              ? null
+              : feeAndUserData.active_users,
+          daily_fee:
+            feeAndUserData.daily_fee === "NA" ? null : feeAndUserData.daily_fee,
+        },
+        { upsert: true }
+      );
+
+      data[TOKEN] = {
+        date: date,
+        name: CONFIG[TOKEN].NAME,
+        tvl: tvl,
+        price: price,
+        circulatingSupply: circulatingSupply,
+        totalSupply: totalSupply,
+        ttv: volume,
+        fdv: fdv,
+        holders: holders,
+        activeHolders: feeAndUserData.active_users,
+        daily_fee: feeAndUserData.daily_fee,
+      };
+    }
   }
 
   console.log(data);

@@ -23,6 +23,7 @@ const tokenNames = [
     "Lyra",
     "Perpetual Protocol",
     "SushiSwap",
+    "dYdX"
 ];
 
 module.exports = { tokenNames }
